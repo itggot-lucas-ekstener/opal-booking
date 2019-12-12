@@ -1,17 +1,29 @@
 .bookings
     .pending
         h1= "pending"
-        -for booking in @pending
-            / span= booking
-            h2= booking["details"]
-            h3= "placed by #{booking["name"]}"
-            a href="/admin/requests/#{booking["booking_id"]}"
-                button Details
-            
+        -if @pending.empty?
+            h3 No pending requests
+        -else
+            -for booking in @pending
+                / span= booking
+                h2= booking["details"]
+                h3= "placed by #{booking["name"]}"
+                a href="/admin/requests/#{booking["booking_id"]}"
+                    button Details
+                
 
     .accepted
         h1= "accepted"
         -for booking in @accepted
+            / span= booking
+            h2= booking["details"]
+            h3= "placed by #{booking["name"]}" 
+            h3= "accepted by #{booking["answered_by"]}"
+            a href="/admin/requests/#{booking["booking_id"]}"
+                button Details
+    .denied
+        h1= "denied"
+        -for booking in @denied
             / span= booking
             h2= booking["details"]
             h3= "placed by #{booking["name"]}" 

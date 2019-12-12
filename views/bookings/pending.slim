@@ -3,6 +3,6 @@
 form action="/admin/requests/#{@current_booking['booking_id']}/accept" method="post"
     button type="submit" Accept
 
-form action="/admin/requests/deny" method="post"
+form action="/admin/requests/#{@current_booking['booking_id']}/deny" method="post"
     button type="submit" Deny
 

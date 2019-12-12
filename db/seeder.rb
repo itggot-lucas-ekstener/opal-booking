@@ -6,8 +6,11 @@ class Seeder
     def self.seed!
         db = connect
         drop_tables(db)
+        puts "Tables dropped"
         create_tables(db)
+        puts "New tables created"
         populate_tables(db)
+        puts "Tables populated"
     end
     
     def self.connect
@@ -165,7 +168,7 @@ class Seeder
         end
         
         bookings.each do |booking|
-            p booking[:answered_by]
+            # p booking[:answered_by]
             db.execute("INSERT INTO booking (details, placed_at, placed_by, answered_by, status_id) VALUES(?,?,?,?,?)", booking[:details], booking[:placed_at], booking[:placed_by], booking[:answered_by], booking[:status_id])
         end
         
@@ -186,3 +189,4 @@ end
         
         
 Seeder.seed!
+puts "All Done"

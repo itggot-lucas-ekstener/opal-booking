@@ -5,10 +5,20 @@ class App < Sinatra::Base
     
     before do
         SassCompiler.compile
-        @current_user = 1
         @db = SQLite3::Database.new('db/opal_booking.db')
         @db.results_as_hash = true
-        
+        @current_user = @db.execute("SELECT * FROM users WHERE id = ?", 1)
+        p @current_user
+        # session[:user_id] = @current_user['id']
+    end
+
+    get '/?' do 
+        slim :index
+    end
+
+
+    get '/login/?' do
+        slim :login
     end
     
     get '/admin/requests/?' do
@@ -36,6 +46,7 @@ class App < Sinatra::Base
 
         current_booking_status = @current_booking['status_name']
         
+        p current_booking_status
         slim :"bookings/#{current_booking_status}"
     end
 
@@ -49,6 +60,16 @@ class App < Sinatra::Base
 
     post '/admin/requests/:id/deny/?' do
         # code for change in database
+        @db.execute('UPDATE booking
+            SET status_id = 3
+            WHERE id = ?', params["id"])
+            p params['id']
+        redirect back
+    end
+
+    get '/requests/new/?' do
+
+        slim :'bookings/new'
     end
 end
 
