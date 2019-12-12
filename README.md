@@ -2,7 +2,7 @@
 
 [domännamn] är en digital plattform där man kan boka lokaler i nya opalkyrkan. 
 
-**Besökare** kan läsa på sidan om de olika lokalerna och deras egenskaper. De endast se vilka tider och lokaler som finns lediga att boka och kan inte boka.
+**Besökare** kan läsa på sidan om de olika lokalerna och deras egenskaper. De kan endast se vilka tider och lokaler som finns lediga att boka och kan inte boka.
 
 **Användare** kan se lediga *tider* och lokaler och kan välja att lägga in en bokningsförfrågan på de lokaler och tider som finns lediga utöver det som besökare kan se. 
 

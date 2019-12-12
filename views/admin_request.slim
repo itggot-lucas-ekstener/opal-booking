@@ -1,17 +1,20 @@
 .bookings
-    -for booking in @pending
-        .pending
-            span= booking
-            h1 = "pending"
-            h2= booking["details"]
-            .contact
-            h3= "placed by #{booking["name"]}" 
-            h3= "Mail: #{booking["mail"]}"
-
-    -for booking in @accepted
-        .accepted
-            span= booking
-            h1= "accepted"
+    .pending
+        h1= "pending"
+        -for booking in @pending
+            / span= booking
             h2= booking["details"]
             h3= "placed by #{booking["name"]}"
+            a href="/admin/requests/#{booking["booking_id"]}"
+                button Details
+            
+
+    .accepted
+        h1= "accepted"
+        -for booking in @accepted
+            / span= booking
+            h2= booking["details"]
+            h3= "placed by #{booking["name"]}" 
             h3= "accepted by #{booking["answered_by"]}"
+            a href="/admin/requests/#{booking["booking_id"]}"
+                button Details
