@@ -1,0 +1,14 @@
+h1 Requests
+a href="/requests/new"
+    button New
+
+h3 Your Bookings and Requests
+.your_requests
+    - for b in @current_users_bookings
+        -booking_id = b['booking_id']
+        -current_reservations = []
+        -for r in @current_users_reservations
+            -if r['booking_id'] == booking_id
+                -current_reservations << r
+        == slim :'bookings/partials/your_booking', locals: {current_booking: b, current_booking_reservations: current_reservations}
+    

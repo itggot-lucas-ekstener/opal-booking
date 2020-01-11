@@ -7,8 +7,8 @@ class App < Sinatra::Base
         SassCompiler.compile
         @db = SQLite3::Database.new('db/opal_booking.db')
         @db.results_as_hash = true
-        @current_user = @db.execute("SELECT * FROM users WHERE id = ?", 1)
-        p @current_user
+        @current_user = @db.execute("SELECT * FROM users WHERE id = ?", 2).first
+        # p @current_user
         # session[:user_id] = @current_user['id']
     end
 
@@ -40,8 +40,8 @@ class App < Sinatra::Base
             WHERE booking_id = ?', params["id"]).first
         p @current_booking
         @booking_id = params['id'].to_i
-        @current_booking_reservations = @db.execute('SELECT * from reservation 
-            JOIN room ON reservation.room_id = room.id
+        @current_booking_reservations = @db.execute('SELECT * from room_reservation 
+            JOIN room ON room_reservation.room_id = room.id
             WHERE booking_id = ?', @booking_id)
 
         current_booking_status = @current_booking['status_name']
@@ -54,6 +54,9 @@ class App < Sinatra::Base
         @db.execute('UPDATE booking
             SET status_id = 2
             WHERE id = ?', params["id"])
+        @db.execute('UPDATE booking
+            SET answered_by = ?
+            WHERE id = ?', @current_user["id"], params["id"])
             p params['id']
         redirect back
     end
@@ -67,9 +70,62 @@ class App < Sinatra::Base
         redirect back
     end
 
-    get '/requests/new/?' do
+    get '/requests/?' do
+        @current_users_bookings = @db.execute('SELECT *, booking.id as "booking_id", status.name as "status_name" from booking
+            JOIN status ON booking.status_id = status.id
+            WHERE placed_by = ?', @current_user["id"])
+        p @current_users_bookings
+        # @current_users_bookings.each do |b|
+            # p b
+            # puts"________________"
+        # end
+        # puts "____________________"
+        @current_users_reservations = []
+        @current_users_bookings.each do |booking|
+            reservations = @db.execute('SELECT * from room_reservation
+                JOIN room ON room_reservation.room_id = room.id
+                WHERE booking_id = ?', booking["booking_id"])
+            # p reservations
+            # puts"____________________"
+            if @current_users_reservations.length < 1
+                @current_users_reservations = reservations
+            else
+                @current_users_reservations << reservations.first
+            end
+        end
+        p @current_users_reservations
 
+        slim :requests
+    end
+
+    get '/requests/new/?' do
+        @rooms = @db.execute('SELECT * FROM room')
+        # p @rooms
         slim :'bookings/new'
+    end
+
+    post '/requests/new/place/?' do
+        # p params
+        current_time = Date.today.to_s
+        p params
+        @db.transaction
+            # p params['details']
+            # p current_time
+            # p @current_user
+            @db.execute('INSERT INTO booking (details, placed_at, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?,?)', params['details'], current_time, @current_user['id'], nil, 1, params['start_time'], params['end_time'])
+            booking_id = @db.execute('SELECT id from booking
+                ORDER BY id DESC
+                LIMIT 1;').first
+            # p booking_id
+            p params
+            params['select_room'].each do |room_id|
+                
+                # room_id = @db.execute('SELECT id from room
+                #     WHERE name = ?', params["select_room"]).first
+                @db.execute('INSERT INTO room_reservation (booking_id, room_id) VALUES(?,?)', booking_id['id'], room_id)
+            end
+        @db.commit
+        redirect back
     end
 end
 

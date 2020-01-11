@@ -1,8 +1,7 @@
-h2= "Booking request by #{current_booking['name']}"
-h4= "Mail: #{current_booking['mail']}"
 h4= "Details: #{current_booking['details']}"
 h4= "Request processed by #{current_booking['answered_by']}"
+h5= "From #{current_booking['start_time']} to #{current_booking['end_time']}"
 h4= "Reserved rooms"
 .reservations
     -for reserv in current_booking_reservations
-        p= "#{reserv['name']} from #{reserv['start_time']} to #{reserv['end_time']}"
+        p= "#{reserv['name']}"

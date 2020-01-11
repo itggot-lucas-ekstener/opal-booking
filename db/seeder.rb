@@ -14,7 +14,7 @@ class Seeder
     end
     
     def self.connect
-        db = SQLite3::Database.new 'opal_booking.db'
+        db = SQLite3::Database.new 'db/opal_booking.db'
         db.results_as_hash = true
         return db
     end
@@ -24,7 +24,7 @@ class Seeder
         db.execute('DROP TABLE IF EXISTS roles;')
         db.execute('DROP TABLE IF EXISTS booking;')
         db.execute('DROP TABLE IF EXISTS status;')
-        db.execute('DROP TABLE IF EXISTS reservation;')
+        db.execute('DROP TABLE IF EXISTS room_reservation;')
         db.execute('DROP TABLE IF EXISTS room;')
     end
     
@@ -56,17 +56,16 @@ class Seeder
             "placed_by"	INTEGER,
             "answered_by" INTEGER,
             "status_id"	INTEGER,
+            "start_time" TEXT,
+            "end_time" TEXT,
             PRIMARY KEY("id")
         );
         SQL
         db.execute <<-SQL
-        CREATE TABLE "reservation" (
-            "id"	INTEGER,
-            "start_time"	TEXT,
-            "end_time"	TEXT,
+        CREATE TABLE "room_reservation" (
             "booking_id"	INTEGER,
             "room_id"	INTEGER,
-            PRIMARY KEY("id")
+            PRIMARY KEY("booking_id","room_id")
         );
         SQL
         db.execute <<-SQL
@@ -115,14 +114,18 @@ class Seeder
                 details:"unanswered booking",
                 placed_at:"some date",
                 placed_by: 2,
-                status_id: 1
+                status_id: 1,
+                start_time: "2020-01-01T21:00",
+                end_time: "2020-01-01T22:00"
             },
             {
                 details:"answered booking 2",
                 placed_at:"another date",
                 placed_by: 2,
                 answered_by: 1,
-                status_id: 2
+                status_id: 2,
+                start_time: "2020-01-01T21:00",
+                end_time: "2020-01-01T22:00"
             }
         ]
 
@@ -134,20 +137,14 @@ class Seeder
 
         reservations = [
             {
-                start_time:"08:20",
-                end_time:"16:50",
                 booking_id: 1,
                 room_id: 1
             },
             {
-                start_time:"08:20",
-                end_time:"16:50",
                 booking_id: 1,
                 room_id: 2
             },
             {
-                start_time:"08:20",
-                end_time:"16:50",
                 booking_id: 2,
                 room_id: 3
             }
@@ -169,7 +166,7 @@ class Seeder
         
         bookings.each do |booking|
             # p booking[:answered_by]
-            db.execute("INSERT INTO booking (details, placed_at, placed_by, answered_by, status_id) VALUES(?,?,?,?,?)", booking[:details], booking[:placed_at], booking[:placed_by], booking[:answered_by], booking[:status_id])
+            db.execute("INSERT INTO booking (details, placed_at, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?,?)", booking[:details], booking[:placed_at], booking[:placed_by], booking[:answered_by], booking[:status_id], booking[:start_time], booking[:end_time])
         end
         
         status.each do |status|
@@ -177,7 +174,7 @@ class Seeder
         end
         
         reservations.each do |res|
-            db.execute("INSERT INTO reservation (start_time, end_time, booking_id, room_id) VALUES(?,?,?,?)", res[:start_time], res[:end_time], res[:booking_id], res[:room_id])
+            db.execute("INSERT INTO room_reservation (booking_id, room_id) VALUES(?,?)", res[:booking_id], res[:room_id])
         end
         
         rooms.each do |room|

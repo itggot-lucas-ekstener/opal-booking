@@ -27,6 +27,6 @@
             / span= booking
             h2= booking["details"]
             h3= "placed by #{booking["name"]}" 
-            h3= "accepted by #{booking["answered_by"]}"
+            h3= "denied by #{booking["answered_by"]}"
             a href="/admin/requests/#{booking["booking_id"]}"
                 button Details

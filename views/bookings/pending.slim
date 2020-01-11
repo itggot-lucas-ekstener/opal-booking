@@ -1,8 +1,8 @@
 == slim :'bookings/partials/booking_details', locals: {current_booking: @current_booking, current_booking_reservations: @current_booking_reservations}
 
-form action="/admin/requests/#{@current_booking['booking_id']}/accept" method="post"
+form action="/admin/requests/#{@current_booking['booking_id']}/accept/?" method="post"
     button type="submit" Accept
 
-form action="/admin/requests/#{@current_booking['booking_id']}/deny" method="post"
+form action="/admin/requests/#{@current_booking['booking_id']}/deny/?" method="post"
     button type="submit" Deny
 
