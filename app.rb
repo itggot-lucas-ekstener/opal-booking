@@ -87,10 +87,12 @@ class App < Sinatra::Base
                 WHERE booking_id = ?', booking["booking_id"])
             # p reservations
             # puts"____________________"
-            if @current_users_reservations.length < 1
+            if @current_users_reservations.length <= 1
                 @current_users_reservations = reservations
             else
-                @current_users_reservations << reservations.first
+                reservations.each do |res|
+                    @current_users_reservations << res
+                end
             end
         end
         p @current_users_reservations

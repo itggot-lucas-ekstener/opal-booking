@@ -14,7 +14,7 @@ form action="/requests/new/place/?" method="post"
             -for room in @rooms
                 option value="#{room['id']}" #{room['name']}
     br/
-    button type="submit" Place
+    button class="btn btn-outline-primary" type="submit" Place
 
 a href="/requests"
-    button Back
+    button class="btn btn-outline-warning" Back
