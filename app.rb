@@ -21,16 +21,21 @@ class App < Sinatra::Base
         slim :login
     end
     
+    get '/admin/?' do
+        slim :'admin/admin_main'
+    end
+
     get '/admin/requests/?' do
         all_bookings = @db.execute('SELECT *, users.id as "user_id", booking.id as "booking_id", status.name as "status_name" from booking
             JOIN status ON booking.status_id = status.id
             JOIN users ON booking.placed_by = users.id')
+        p all_bookings
         
         @pending = all_bookings.select {|booking| booking['status_id'] == 1}
         @accepted = all_bookings.select {|booking| booking['status_id'] == 2}
         @denied = all_bookings.select {|booking| booking['status_id'] == 3}
         
-        slim :admin_request
+        slim :'admin/admin_request'
     end 
 
     get '/admin/requests/:id/?' do
@@ -70,6 +75,26 @@ class App < Sinatra::Base
         redirect back
     end
 
+    get '/admin/rooms/?' do
+        @all_rooms = @db.execute('SELECT * FROM room')
+
+        slim :'admin/admin_rooms'
+    end
+
+    get '/admin/rooms/:id/?' do
+        @current_room = @db.execute('SELECT * FROM room
+            WHERE id = ?', params["id"]).first
+        p @current_room
+    
+        slim :'admin/admin_room_details'
+    end
+
+    get '/admin/rooms/:id/edit/?' do
+        @current_room = @db.execute('SELECT * FROM room
+            WHERE id = ?', params["id"]).first
+        slim :'admin/admin_room_edit'
+    end
+
     get '/requests/?' do
         @current_users_bookings = @db.execute('SELECT *, booking.id as "booking_id", status.name as "status_name" from booking
             JOIN status ON booking.status_id = status.id
@@ -97,8 +122,10 @@ class App < Sinatra::Base
         end
         p @current_users_reservations
 
-        slim :requests
+        slim :'user/requests'
     end
+    
+   
 
     get '/requests/new/?' do
         @rooms = @db.execute('SELECT * FROM room')

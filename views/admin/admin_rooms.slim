@@ -1,0 +1,8 @@
+h1 rooms
+
+.rooms
+    - @all_rooms.each do |room|
+        .card
+            h5 = room['name']
+            a href="/admin/rooms/#{room["id"]}"
+                button class="btn btn-outline-primary" Details

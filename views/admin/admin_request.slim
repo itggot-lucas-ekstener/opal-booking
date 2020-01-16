@@ -6,10 +6,11 @@
         -else
             -for booking in @pending
                 / span= booking
-                h2= booking["details"]
-                h3= "placed by #{booking["name"]}"
-                a href="/admin/requests/#{booking["booking_id"]}"
-                    button Details
+                .card
+                    h2= booking["details"]
+                    h3= "placed by #{booking["name"]}"
+                    a href="/admin/requests/#{booking["booking_id"]}"
+                        button Details
                 
 
     .accepted

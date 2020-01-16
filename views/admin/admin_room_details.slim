@@ -1,0 +1,6 @@
+== slim :'room/room_details', locals: {current_room: @current_room}
+a href="/admin/rooms/#{@current_room["id"].to_s}/edit"
+    button class="btn btn-outline-primary" Edit
+
+a href="#{back}"
+    button class="btn btn-outline-warning" Back

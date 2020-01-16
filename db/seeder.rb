@@ -72,6 +72,7 @@ class Seeder
         CREATE TABLE "room" (
             "id"	INTEGER,
             "name"	TEXT NOT NULL,
+            "room_details" TEXT,
             PRIMARY KEY("id")
         );
         SQL
@@ -151,9 +152,9 @@ class Seeder
         ]
 
         rooms = [
-            {name:"gympasal"},
-            {name:"kök"},
-            {name:"omklädningsrum"}
+            {name:"gympasal", details:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde nemo distinctio explicabo vitae ipsum culpa voluptatibus odio accusamus optio. Perspiciatis ea est deserunt veritatis commodi, non nobis reiciendis. Qui repudiandae ex praesentium fuga vel nulla odio, debitis veniam, enim obcaecati, fugiat ea! At veritatis, et libero asperiores velit corporis vitae!"},
+            {name:"kök", details:"Ett kök kort sagt. Inte så mycket mer att säga :)"},
+            {name:"omklädningsrum", details:"Bra att ha om man ska använda gympasalen. Finns dusch om man blir svettig."}
         ]
 
         users.each do |user|
@@ -178,7 +179,7 @@ class Seeder
         end
         
         rooms.each do |room|
-            db.execute("INSERT INTO room (name) VALUES(?)", room[:name])
+            db.execute("INSERT INTO room (name, room_details) VALUES(?,?)", room[:name], room[:details])
         end
 
     end
