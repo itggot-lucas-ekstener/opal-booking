@@ -4,5 +4,5 @@ h1 rooms
     - @all_rooms.each do |room|
         .card
             h5 = room['name']
-            a href="/admin/rooms/#{room["id"]}"
+            a href="/admin/rooms/view/#{room["id"]}"
                 button class="btn btn-outline-primary" Details

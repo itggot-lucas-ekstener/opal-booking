@@ -75,13 +75,13 @@ class App < Sinatra::Base
         redirect back
     end
 
-    get '/admin/rooms/?' do
+    get '/admin/rooms/view/?' do
         @all_rooms = @db.execute('SELECT * FROM room')
 
         slim :'admin/admin_rooms'
     end
 
-    get '/admin/rooms/:id/?' do
+    get '/admin/rooms/view/:id/?' do
         @current_room = @db.execute('SELECT * FROM room
             WHERE id = ?', params["id"]).first
         p @current_room
@@ -89,10 +89,28 @@ class App < Sinatra::Base
         slim :'admin/admin_room_details'
     end
 
-    get '/admin/rooms/:id/edit/?' do
+    get '/admin/rooms/view/:id/edit/?' do
         @current_room = @db.execute('SELECT * FROM room
             WHERE id = ?', params["id"]).first
         slim :'admin/admin_room_edit'
+    end
+
+    get '/admin/rooms/new/?' do
+        slim :'admin/admin_room_new'
+    end
+
+    post '/admin/rooms/update/?' do
+        if params[:prefilled] == "true"
+            puts "Update"
+            @db.execute('UPDATE room
+                SET name = ?, room_details = ?
+                WHERE id = ?', params[:room_name], params[:room_details], params[:room_id])
+            puts "Success"
+        else
+            puts "New"
+            @db.execute('INSERT INTO room (name, room_details) VALUES(?,?)', params[:room_name], params[:room_details])
+            puts "Success"
+        end
     end
 
     get '/requests/?' do
