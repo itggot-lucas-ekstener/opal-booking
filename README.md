@@ -26,6 +26,6 @@ Man kan också välja att boka under olika typer av tider:
 
    Bokning av valda salar under en hel dag. 
 
-Admin svarar på bokningsförfrågor och kan justera på hur bokningen ser ut. De kan även ta bort bokningar och kan se all information om bokade tider, vem som bokat etc. 
+**Admin** svarar på bokningsförfrågor och kan justera på hur bokningen ser ut. De kan även ta bort bokningar och kan se all information om bokade tider, vem som bokat etc. 
 
-Super-Admin reglerar vem som har admin-privilegier etc.
+**Super-Admin** reglerar vem som har admin-privilegier etc.

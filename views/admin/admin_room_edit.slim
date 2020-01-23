@@ -1,2 +1,5 @@
 h4 Edit Room
 == slim :'room/room_form', locals: {current_room:@current_room, prefilled: true}
+form action="/admin/rooms/view/#{@current_room['id']}/delete" method="post"
+    h3 onclick="confirmDelete()" class="btn btn-danger" Delete
+    button style="display: none;" id="submit_button"

@@ -9,7 +9,7 @@ class App < Sinatra::Base
         @db.results_as_hash = true
         @current_user = @db.execute("SELECT * FROM users WHERE id = ?", 2).first
         # p @current_user
-        # session[:user_id] = @current_user['id']
+        # session[:user_id] = @current_user[:id]
     end
 
     get '/?' do 
@@ -42,9 +42,9 @@ class App < Sinatra::Base
         @current_booking = @db.execute('SELECT *, users.id as "user_id", booking.id as "booking_id", status.name as "status_name", users.name as user_name from booking
             JOIN status ON booking.status_id = status.id
             JOIN users ON booking.placed_by = users.id
-            WHERE booking_id = ?', params["id"]).first
+            WHERE booking_id = ?', params[:id]).first
         p @current_booking
-        @booking_id = params['id'].to_i
+        @booking_id = params[:id].to_i
         @current_booking_reservations = @db.execute('SELECT * from room_reservation 
             JOIN room ON room_reservation.room_id = room.id
             WHERE booking_id = ?', @booking_id)
@@ -58,11 +58,11 @@ class App < Sinatra::Base
     post '/admin/requests/:id/accept/?' do
         @db.execute('UPDATE booking
             SET status_id = 2
-            WHERE id = ?', params["id"])
+            WHERE id = ?', params[:id])
         @db.execute('UPDATE booking
             SET answered_by = ?
-            WHERE id = ?', @current_user["id"], params["id"])
-            p params['id']
+            WHERE id = ?', @current_user[:id], params[:id])
+            p params[:id]
         redirect back
     end
 
@@ -70,12 +70,12 @@ class App < Sinatra::Base
         # code for change in database
         @db.execute('UPDATE booking
             SET status_id = 3
-            WHERE id = ?', params["id"])
-            p params['id']
+            WHERE id = ?', params[:id])
+            p params[:id]
         redirect back
     end
 
-    get '/admin/rooms/view/?' do
+    get '/admin/rooms/?' do
         @all_rooms = @db.execute('SELECT * FROM room')
 
         slim :'admin/admin_rooms'
@@ -83,7 +83,7 @@ class App < Sinatra::Base
 
     get '/admin/rooms/view/:id/?' do
         @current_room = @db.execute('SELECT * FROM room
-            WHERE id = ?', params["id"]).first
+            WHERE id = ?', params[:id]).first
         p @current_room
     
         slim :'admin/admin_room_details'
@@ -91,8 +91,14 @@ class App < Sinatra::Base
 
     get '/admin/rooms/view/:id/edit/?' do
         @current_room = @db.execute('SELECT * FROM room
-            WHERE id = ?', params["id"]).first
+            WHERE id = ?', params[:id]).first
         slim :'admin/admin_room_edit'
+    end
+
+    post '/admin/rooms/view/:id/delete' do 
+        @db.execute('DELETE FROM room 
+            WHERE id = ?', params[:id])
+        redirect '/admin/rooms'
     end
 
     get '/admin/rooms/new/?' do
@@ -111,12 +117,13 @@ class App < Sinatra::Base
             @db.execute('INSERT INTO room (name, room_details) VALUES(?,?)', params[:room_name], params[:room_details])
             puts "Success"
         end
+        redirect '/admin/rooms/'
     end
 
     get '/requests/?' do
         @current_users_bookings = @db.execute('SELECT *, booking.id as "booking_id", status.name as "status_name" from booking
             JOIN status ON booking.status_id = status.id
-            WHERE placed_by = ?', @current_user["id"])
+            WHERE placed_by = ?', @current_user[:id])
         p @current_users_bookings
         # @current_users_bookings.each do |b|
             # p b
@@ -159,7 +166,7 @@ class App < Sinatra::Base
             # p params['details']
             # p current_time
             # p @current_user
-            @db.execute('INSERT INTO booking (details, placed_at, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?,?)', params['details'], current_time, @current_user['id'], nil, 1, params['start_time'], params['end_time'])
+            @db.execute('INSERT INTO booking (details, placed_at, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?,?)', params['details'], current_time, @current_user[:id], nil, 1, params['start_time'], params['end_time'])
             booking_id = @db.execute('SELECT id from booking
                 ORDER BY id DESC
                 LIMIT 1;').first
@@ -169,7 +176,7 @@ class App < Sinatra::Base
                 
                 # room_id = @db.execute('SELECT id from room
                 #     WHERE name = ?', params["select_room"]).first
-                @db.execute('INSERT INTO room_reservation (booking_id, room_id) VALUES(?,?)', booking_id['id'], room_id)
+                @db.execute('INSERT INTO room_reservation (booking_id, room_id) VALUES(?,?)', booking_id[:id], room_id)
             end
         @db.commit
         redirect back
