@@ -120,6 +120,16 @@ class App < Sinatra::Base
         redirect '/admin/rooms/'
     end
 
+    get '/admin/users/?' do
+        @all_users = @db.execute('SELECT * FROM users')
+        @admin_users = @db.execute('SELECT * FROM users 
+            WHERE role_id = ?', 2)
+        @normal_users = @db.execute('SELECT *FROM users
+            WHERE role_id = ?', 3)
+
+        slim :'admin/admin_users'
+    end
+
     get '/requests/?' do
         @current_users_bookings = @db.execute('SELECT *, booking.id as "booking_id", status.name as "status_name" from booking
             JOIN status ON booking.status_id = status.id

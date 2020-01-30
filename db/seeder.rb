@@ -96,9 +96,39 @@ class Seeder
                 role_id: 1
             },
             {
-                name: "test_user",
-                mail: "tester@flaskpost.se",
+                name: "test_user1",
+                mail: "tester1@flaskpost.se",
                 pwd_hash:BCrypt::Password.create('test01'),
+                role_id: 2
+            },
+            {
+                name: "test_user2",
+                mail: "tester2@flaskpost.se",
+                pwd_hash:BCrypt::Password.create('test02'),
+                role_id: 2
+            },
+            {
+                name: "test_user3",
+                mail: "tester3@flaskpost.se",
+                pwd_hash:BCrypt::Password.create('test03'),
+                role_id: 3
+            },
+            {
+                name: "test_user4",
+                mail: "tester4@flaskpost.se",
+                pwd_hash:BCrypt::Password.create('test04'),
+                role_id: 3
+            },
+            {
+                name: "test_user5",
+                mail: "tester5@flaskpost.se",
+                pwd_hash:BCrypt::Password.create('test05'),
+                role_id: 3
+            },
+            {
+                name: "test_user6",
+                mail: "tester6@flaskpost.se",
+                pwd_hash:BCrypt::Password.create('test06'),
                 role_id: 3
             }
         ]

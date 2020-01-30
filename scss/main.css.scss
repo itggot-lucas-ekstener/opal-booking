@@ -53,3 +53,7 @@ body{
 .nav-link:hover{
     color: var(--primary);
 }
+
+.navbar-brand:hover{
+    cursor: default;
+}

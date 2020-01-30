@@ -1,0 +1,11 @@
+h4 Users
+
+div class="users container-fluid"
+    h5 Admin
+    .list-group
+        -@admin_users.each do |user|
+            a href="#" class="list-group-item list-group-item-action" = "#{user['name']} - Admin"
+    h5 Normal
+    .list-group
+        -@normal_users.each do |user|
+            a href="#" class="list-group-item list-group-item-action" = "#{user['name']} - User"
