@@ -130,6 +130,29 @@ class App < Sinatra::Base
         slim :'admin/admin_users'
     end
 
+    # get '/admin/users/:id/view' do
+    #     @selected_user = @db.execute('SELECT * FROM users
+    #         WHERE id = ?', params[:id]).first
+    #     slim :'admin/admin_users_view'
+    # end
+
+    post '/admin/users/demote/?' do
+        user_role = @db.execute('SELECT role_id FROM users
+            WHERE id = ?', params["user_id"]).first["role_id"]
+        @db.execute('UPDATE users
+            SET role_id = ?
+            WHERE id = ?', (user_role + 1), params["user_id"])
+        redirect back
+    end
+    post '/admin/users/promote/?' do
+        user_role = @db.execute('SELECT role_id FROM users
+            WHERE id = ?', params["user_id"]).first["role_id"]
+        @db.execute('UPDATE users
+            SET role_id = ?
+            WHERE id = ?', (user_role - 1), params["user_id"])
+        redirect back
+    end
+
     get '/requests/?' do
         @current_users_bookings = @db.execute('SELECT *, booking.id as "booking_id", status.name as "status_name" from booking
             JOIN status ON booking.status_id = status.id
