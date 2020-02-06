@@ -55,6 +55,13 @@ class App < Sinatra::Base
         slim :"bookings/#{current_booking_status}"
     end
 
+    get '/admin/requests/:id/edit/?' do
+        @rooms = @db.execute('SELECT * FROM room')
+        @current_booking = @db.execute('SELECT * FROM booking 
+            WHERE id = ?', params["id"])
+        slim :'bookings/edit'
+    end
+
     post '/admin/requests/:id/accept/?' do
         @db.execute('UPDATE booking
             SET status_id = 2

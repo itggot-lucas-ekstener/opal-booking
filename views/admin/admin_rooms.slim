@@ -1,11 +1,12 @@
-h1 rooms
-
-.rooms
-    - @all_rooms.each do |room|
-        .card
-            h5 = room['name']
-            a href="/admin/rooms/view/#{room["id"]}"
-                button class="btn btn-outline-primary" Details
+.rooms class="card" style="width: 18rem"
+    .card-header 
+        h4 Rooms
+    ul class="list-group"
+        - @all_rooms.each do |room|
+            li class="list-group-item"
+                h5 = room['name']
+                a href="/admin/rooms/view/#{room["id"]}"
+                    button class="btn btn-outline-primary" Details
 a href="/admin/rooms/new"
     button class="btn btn-secondary" New
 

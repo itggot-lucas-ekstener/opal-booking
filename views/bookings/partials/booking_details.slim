@@ -2,7 +2,9 @@ h2= "Booking request by #{current_booking['name']}"
 h4= "Mail: #{current_booking['mail']}"
 h4= "Details: #{current_booking['details']}"
 h4= "Request processed by #{current_booking['answered_by']}"
-h4= "Reserved rooms"
-.reservations
-    -for reserv in current_booking_reservations
-        p= "#{reserv['name']} from #{reserv['start_time']} to #{reserv['end_time']}"
+.reservations class="card" style="width: 18rem"
+    div class="card-header" 
+        b Reserved rooms
+    ul class="list-group"
+        -for reserv in current_booking_reservations
+            li class="list-group-item"= "#{reserv['name']}"

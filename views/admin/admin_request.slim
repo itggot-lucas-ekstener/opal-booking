@@ -1,33 +1,41 @@
 .bookings
     .pending
-        h1= "pending"
-        -if @pending.empty?
-            h3 No pending requests
-        -else
+        h3= "pending"
+        -if !@pending.empty?
             -for booking in @pending
                 / span= booking
-                .card
-                    h2= booking["details"]
-                    h3= "placed by #{booking["name"]}"
+                .card style="width: 18rem"
+                    h4= booking["details"]
+                    h5= "placed by #{booking["name"]}"
                     a href="/admin/requests/#{booking["booking_id"]}"
-                        button Details
+                        button class="btn btn-primary" Details
+        -else
+            h4 No pending requests
                 
 
     .accepted
-        h1= "accepted"
-        -for booking in @accepted
-            / span= booking
-            h2= booking["details"]
-            h3= "placed by #{booking["name"]}" 
-            h3= "accepted by #{booking["answered_by"]}"
-            a href="/admin/requests/#{booking["booking_id"]}"
-                button Details
+        h3= "accepted"
+        -if !@accepted.empty?
+            -for booking in @accepted
+                / span= booking
+                .card style="width: 18rem"
+                    h4= booking["details"]
+                    h5= "placed by #{booking["name"]}" 
+                    h5= "accepted by #{booking["answered_by"]}"
+                    a href="/admin/requests/#{booking["booking_id"]}"
+                        button class="btn btn-primary" Details
+        -else 
+            h4 No accepted requests
     .denied
-        h1= "denied"
-        -for booking in @denied
-            / span= booking
-            h2= booking["details"]
-            h3= "placed by #{booking["name"]}" 
-            h3= "denied by #{booking["answered_by"]}"
-            a href="/admin/requests/#{booking["booking_id"]}"
-                button Details
+        h3= "denied"
+        -if !@denied.empty?
+            -for booking in @denied
+                / span= booking
+                .card style="width: 18rem"
+                    h4= booking["details"]
+                    h5= "placed by #{booking["name"]}" 
+                    h5= "denied by #{booking["answered_by"]}"
+                    a href="/admin/requests/#{booking["booking_id"]}"
+                        button class="btn btn-primary" Details
+        -else 
+            h4 No denied requests

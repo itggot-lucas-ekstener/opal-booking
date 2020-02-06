@@ -1,20 +1,2 @@
-h3 Place a booking request
-form action="/requests/new/place/?" method="post"
-    h5 Details:
-    textarea cols="100" rows="4" id="details" name="details"
-    .form-group
-        label for="start-time" Start time:
-        input type="datetime-local" name="start_time" id="start-time"
-        label for="end-time" End time:
-        input type="datetime-local" name="end_time" id="end-time"
-    h5 Rooms:
-    .form-group
-        label for="select_room" Select room:  
-        select multiple="" class="form-control" name="select_room[]" id="select_room" 
-            -for room in @rooms
-                option value="#{room['id']}" #{room['name']}
-    br/
-    button class="btn btn-outline-primary" type="submit" Place
-
-a href="/requests"
-    button class="btn btn-outline-warning" Back
+h4 Create new booking request
+== slim :'bookings/request_form', locals: {current_booking: @current_booking, current_booking_reservations: @current_booking_reservations, prefilled: false}
