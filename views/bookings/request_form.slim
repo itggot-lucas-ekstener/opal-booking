@@ -1,5 +1,6 @@
--if prefilled
-    form action="/requests/new/place/?" method="post"
+-if !prefilled
+    form action="/requests/update" method="post"
+        input type="hidden" name="prefilled" id="prefilled" value="false"
         h5 Details:
         textarea cols="100" rows="4" id="details" name="details"
         .form-group
@@ -17,4 +18,34 @@
         button class="btn btn-outline-primary" type="submit" Place
 
     a href="/requests"
+        button class="btn btn-outline-warning" Back
+- else
+    form action="/requests/update" method="post"
+        input type="hidden" name="prefilled" id="prefilled" value="true"
+        input type="hidden" name="booking_id" id="booking_id" value="#{current_booking['id']}"
+        h5 Details:
+        textarea cols="100" rows="4" id="details" name="details" required="" = "#{current_booking['details']}"
+        .form-group
+            label for="start-time" Start time:
+            input type="datetime-local" name="start_time" id="start-time" value="#{@current_booking['start_time']}"
+            label for="end-time" End time:
+            input type="datetime-local" name="end_time" id="end-time" value="#{@current_booking['end_time']}"
+        h5 Rooms:
+        .form-group
+            label for="select_room" Select room:  
+            select multiple="" class="form-control" name="select_room[]" id="select_room" 
+                -for room in @rooms
+                    -i = 0
+                    -for reserv in current_booking_reservations
+                        -if reserv['room_id'] == room['id']
+                            -i += 1
+                    -if i > 0
+                        option type="checkbox" selected="" value="#{room['id']}" #{room['name']}
+                    -else
+                        option type="checkbox" value="#{room['id']}" #{room['name']}
+
+        br/
+        button class="btn btn-outline-primary" type="submit" Save
+
+    a href="#{back}"
         button class="btn btn-outline-warning" Back

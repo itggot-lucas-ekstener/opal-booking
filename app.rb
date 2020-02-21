@@ -58,7 +58,14 @@ class App < Sinatra::Base
     get '/admin/requests/:id/edit/?' do
         @rooms = @db.execute('SELECT * FROM room')
         @current_booking = @db.execute('SELECT * FROM booking 
-            WHERE id = ?', params["id"])
+            WHERE id = ?', params["id"]).first
+        @booking_id = params["id"].to_i       
+        @current_booking_reservations = @db.execute('SELECT * from room_reservation 
+            JOIN room ON room_reservation.room_id = room.id
+            WHERE booking_id = ?', @booking_id)
+        p @current_booking_reservations
+
+        
         slim :'bookings/edit'
     end
 
@@ -189,8 +196,6 @@ class App < Sinatra::Base
 
         slim :'user/requests'
     end
-    
-   
 
     get '/requests/new/?' do
         @rooms = @db.execute('SELECT * FROM room')
@@ -198,29 +203,53 @@ class App < Sinatra::Base
         slim :'bookings/new'
     end
 
-    post '/requests/new/place/?' do
+    post '/requests/update/?' do
         # p params
-        current_time = Date.today.to_s
-        p params
-        @db.transaction
-            # p params['details']
-            # p current_time
-            # p @current_user
-            @db.execute('INSERT INTO booking (details, placed_at, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?,?)', params['details'], current_time, @current_user["id"], nil, 1, params['start_time'], params['end_time'])
-            booking_id = @db.execute('SELECT id from booking
-                ORDER BY id DESC
-                LIMIT 1;').first
-            # p booking_id
-            p params
+        params[:start_time] = DateTime.parse("#{params[:start_time]}:00+01:00").to_time.to_i
+        params[:end_time] = DateTime.parse("#{params[:end_time]}:00+01:00").to_time.to_i
+        if params[:prefilled] == "true"
+            puts "update"
+            @db.transaction 
+            @db.execute('UPDATE booking
+                SET details = ?, start_time = ?, end_time = ?
+                WHERE id = ?', params[:details], params[:start_time], params[:end_time], params[:booking_id])
+            @booking_id = params["booking_id"].to_i
+            p @booking_id     
+            @db.execute('DELETE FROM room_reservation
+                WHERE booking_id = ?', @booking_id)
             params['select_room'].each do |room_id|
                 
                 # room_id = @db.execute('SELECT id from room
                 #     WHERE name = ?', params["select_room"]).first
-                @db.execute('INSERT INTO room_reservation (booking_id, room_id) VALUES(?,?)', booking_id["id"], room_id)
+                @db.execute('INSERT INTO room_reservation (booking_id, room_id) VALUES(?,?)', @booking_id, room_id)
             end
-        @db.commit
+            @db.commit
+        else
+            puts "new"
+            current_time = Date.today.to_s
+            p params
+            @db.transaction
+                # p params['details']
+                # p current_time
+                # p @current_user
+                @db.execute('INSERT INTO booking (details, placed_at, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?,?)', params['details'], current_time, @current_user["id"], nil, 1, params['start_time'], params['end_time'])
+                booking_id = @db.execute('SELECT id from booking
+                ORDER BY id DESC
+                LIMIT 1;').first
+                # p booking_id
+                p params
+                params['select_room'].each do |room_id|
+                    
+                    # room_id = @db.execute('SELECT id from room
+                    #     WHERE name = ?', params["select_room"]).first
+                    @db.execute('INSERT INTO room_reservation (booking_id, room_id) VALUES(?,?)', booking_id["id"], room_id)
+                end
+            @db.commit
+        end
+        puts "success"
         redirect back
     end
+    
+    
+    
 end
-
-
