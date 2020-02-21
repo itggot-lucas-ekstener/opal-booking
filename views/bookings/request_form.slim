@@ -17,12 +17,13 @@
         br/
         button class="btn btn-outline-primary" type="submit" Place
 
-    a href="/requests"
+    a href="#{@callback}"
         button class="btn btn-outline-warning" Back
 - else
     form action="/requests/update" method="post"
         input type="hidden" name="prefilled" id="prefilled" value="true"
         input type="hidden" name="booking_id" id="booking_id" value="#{current_booking['id']}"
+        input type="hidden" name="callback" value="#{@callback}"
         h5 Details:
         textarea cols="100" rows="4" id="details" name="details" required="" = "#{current_booking['details']}"
         .form-group
@@ -47,5 +48,5 @@
         br/
         button class="btn btn-outline-primary" type="submit" Save
 
-    a href="#{back}"
+    a href="#{@callback}"
         button class="btn btn-outline-warning" Back

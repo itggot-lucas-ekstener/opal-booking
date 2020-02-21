@@ -7,7 +7,7 @@ class App < Sinatra::Base
         SassCompiler.compile
         @db = SQLite3::Database.new('db/opal_booking.db')
         @db.results_as_hash = true
-        @current_user = @db.execute("SELECT * FROM users WHERE id = ?", 2).first
+        @current_user = @db.execute("SELECT * FROM users WHERE id = ?", 1).first
         # p @current_user
         # session[:user_id] = @current_user[:id]
     end
@@ -50,20 +50,23 @@ class App < Sinatra::Base
             WHERE booking_id = ?', @booking_id)
 
         current_booking_status = @current_booking['status_name']
-        
         p current_booking_status
         slim :"bookings/#{current_booking_status}"
     end
 
     get '/admin/requests/:id/edit/?' do
+        @callback = request.path_info[0..-5]
         @rooms = @db.execute('SELECT * FROM room')
         @current_booking = @db.execute('SELECT * FROM booking 
             WHERE id = ?', params["id"]).first
+        @current_booking['start_time'] = DateTime.strptime(@current_booking['start_time'].to_s, '%s').to_s[0..-7]
+        @current_booking['end_time'] = DateTime.strptime(@current_booking['end_time'].to_s, '%s').to_s[0..-7]
+        p @current_booking
         @booking_id = params["id"].to_i       
         @current_booking_reservations = @db.execute('SELECT * from room_reservation 
             JOIN room ON room_reservation.room_id = room.id
             WHERE booking_id = ?', @booking_id)
-        p @current_booking_reservations
+        # p @current_booking_reservations
 
         
         slim :'bookings/edit'
@@ -204,11 +207,18 @@ class App < Sinatra::Base
     end
 
     post '/requests/update/?' do
-        # p params
+        p params
         params[:start_time] = DateTime.parse("#{params[:start_time]}:00+01:00").to_time.to_i
         params[:end_time] = DateTime.parse("#{params[:end_time]}:00+01:00").to_time.to_i
         if params[:prefilled] == "true"
             puts "update"
+            overlap = @db.execute('SELECT * FROM booking 
+                WHERE start_time < ? AND ? < end_time
+                OR start_time < ? AND ? < end_time
+                OR ? < start_time AND start_time < ?
+                OR ? < end_time AND end_time < ?', params[:start_time], params[:start_time], params[:end_time], params[:end_time], params[:start_time], params[:end_time], params[:start_time], params[:end_time])
+            puts "overlap:"
+            p overlap
             @db.transaction 
             @db.execute('UPDATE booking
                 SET details = ?, start_time = ?, end_time = ?
@@ -228,6 +238,7 @@ class App < Sinatra::Base
             puts "new"
             current_time = Date.today.to_s
             p params
+            
             @db.transaction
                 # p params['details']
                 # p current_time
@@ -247,7 +258,7 @@ class App < Sinatra::Base
             @db.commit
         end
         puts "success"
-        redirect back
+        redirect params['callback']
     end
     
     
