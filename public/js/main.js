@@ -12,3 +12,8 @@ function confirmPlace(){
         button.form.submit();
     }
 }
+
+// Material Select Initialization
+// (document).ready(function() {
+//     ('.mdb-select').materialSelect();
+// });

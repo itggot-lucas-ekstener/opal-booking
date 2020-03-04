@@ -10,10 +10,10 @@
             input type="datetime-local" name="end_time" id="end-time"
         h5 Rooms:
         .form-group
-            label for="select_room" Select room:  
-            select multiple="" class="form-control" name="select_room[]" id="select_room" 
+            label class="md-main-label" for="select_room" Select room:  
+            select class="mdb-select md-form" multiple="" name="select_room[]" id="select_room" 
                 -for room in @rooms
-                    option value="#{room['id']}" #{room['name']}
+                    option value="#{room['id']}" = "#{room['name']}"
         br/
         button class="btn btn-outline-primary" type="submit" Place
 
@@ -34,17 +34,16 @@
         h5 Rooms:
         .form-group
             label for="select_room" Select room:  
-            select multiple="" class="form-control" name="select_room[]" id="select_room" 
+            select multiple="" class="mdb-select md-form" name="select_room[]" id="select_room" 
                 -for room in @rooms
                     -i = 0
                     -for reserv in current_booking_reservations
                         -if reserv['room_id'] == room['id']
                             -i += 1
                     -if i > 0
-                        option type="checkbox" selected="" value="#{room['id']}" #{room['name']}
+                        option selected="" value="#{room['id']}" #{room['name']}
                     -else
-                        option type="checkbox" value="#{room['id']}" #{room['name']}
-
+                        option value="#{room['id']}" #{room['name']}
         br/
         button class="btn btn-outline-primary" type="submit" Save
 

@@ -238,12 +238,18 @@ class App < Sinatra::Base
             puts "new"
             current_time = Date.today.to_s
             p params
+            overlap = @db.execute('SELECT * FROM booking 
+                WHERE start_time < ? AND ? < end_time
+                OR start_time < ? AND ? < end_time
+                OR ? < start_time AND start_time < ?
+                OR ? < end_time AND end_time < ?', params[:start_time], params[:start_time], params[:end_time], params[:end_time], params[:start_time], params[:end_time], params[:start_time], params[:end_time])
+            puts "overlap:"
             
             @db.transaction
                 # p params['details']
                 # p current_time
                 # p @current_user
-                @db.execute('INSERT INTO booking (details, placed_at, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?,?)', params['details'], current_time, @current_user["id"], nil, 1, params['start_time'], params['end_time'])
+                @db.execute('INSERT INTO booking (details, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?)', params['details'], @current_user["id"], nil, 1, params['start_time'], params['end_time'])
                 booking_id = @db.execute('SELECT id from booking
                 ORDER BY id DESC
                 LIMIT 1;').first
