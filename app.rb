@@ -1,3 +1,5 @@
+require 'rack-flash'
+
 class App < Sinatra::Base
     Dir['modules/**/*.rb'].each do |file|
         require_relative file
@@ -244,7 +246,11 @@ class App < Sinatra::Base
                 OR ? < start_time AND start_time < ?
                 OR ? < end_time AND end_time < ?', params[:start_time], params[:start_time], params[:end_time], params[:end_time], params[:start_time], params[:end_time], params[:start_time], params[:end_time])
             puts "overlap:"
-            
+            if !overlap.empty?
+                puts "it's an overlap!!!"    
+                redirect back
+            end
+
             @db.transaction
                 # p params['details']
                 # p current_time

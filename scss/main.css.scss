@@ -29,8 +29,8 @@
     --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }
 body{
-    background-color: black;
-    color: white;
+    // background-color: black;
+    // color: white;
 }
 
 // .pending{
@@ -46,14 +46,18 @@ body{
     justify-content: left;
 }
 
-.nav-link{
-    color: var(--light);
-}
+// .nav-link{
+//     color: var(--light);
+// }
 
-.nav-link:hover{
-    color: var(--primary);
-}
+// .nav-link:hover{
+//     color: var(--primary);
+// }
 
 .navbar-brand:hover{
     cursor: default;
+}
+
+a.btn.btn-light{
+    color: black;
 }
