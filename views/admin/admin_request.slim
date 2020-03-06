@@ -4,12 +4,15 @@
         -if !@pending.empty?
             -for booking in @pending
                 / span= booking
-                .card style="width: 18rem"
+                .card style="width: 25rem"
                     .card-header
                         h4= booking["details"]
                     ul class="list-group"
                         li class="list-group-item" 
                             h5= "placed by #{booking["name"]}"
+                        li class="list-group-item"
+                            p="Start time: #{DateTime.strptime(booking["start_time"].to_s, '%s')}"
+                            p="End time: #{DateTime.strptime(booking["end_time"].to_s, '%s')}"
                         li class="list-group-item"
                             a href="/admin/requests/#{booking["booking_id"]}"
                                 button class="btn btn-primary" Details
@@ -22,12 +25,15 @@
         -if !@accepted.empty?
             -for booking in @accepted
                 / span= booking
-                .card style="width: 18rem"
+                .card style="width: 25rem"
                     .card-header
                         h4= booking["details"]
                     ul class="list-group"
                         li class="list-group-item"
-                            h5= "placed by #{booking["name"]}" 
+                            h5= "placed by #{booking["name"]}"
+                        li class="list-group-item"
+                            p="Start time: #{DateTime.strptime(booking["start_time"].to_s, '%s')}"
+                            p="End time: #{DateTime.strptime(booking["end_time"].to_s, '%s')}"
                         li class="list-group-item"
                             h5= "accepted by #{booking["answered_by"]}"
                         li class="list-group-item"
@@ -40,12 +46,15 @@
         -if !@denied.empty?
             -for booking in @denied
                 / span= booking
-                .card style="width: 18rem"
+                .card style="width: 25rem"
                     .card-header
                         h4= booking["details"]
                     ul class="list-group"
                         li class="list-group-item"
-                            h5= "placed by #{booking["name"]}" 
+                            h5= "placed by #{booking["name"]}"
+                        li class="list-group-item"
+                            p="Start time: #{DateTime.strptime(booking["start_time"].to_s, '%s')}"
+                            p="End time: #{DateTime.strptime(booking["end_time"].to_s, '%s')}"
                         li class="list-group-item"
                             h5= "denied by #{booking["answered_by"]}"
                         li class="list-group-item"

@@ -4,6 +4,9 @@ class App < Sinatra::Base
     Dir['modules/**/*.rb'].each do |file|
         require_relative file
     end
+
+    enable :sessions
+    use Rack::Flash
     
     before do
         SassCompiler.compile
@@ -205,6 +208,7 @@ class App < Sinatra::Base
     get '/requests/new/?' do
         @rooms = @db.execute('SELECT * FROM room')
         # p @rooms
+        p DateTime.now.to_s
         slim :'bookings/new'
     end
 
@@ -221,6 +225,11 @@ class App < Sinatra::Base
                 OR ? < end_time AND end_time < ?', params[:start_time], params[:start_time], params[:end_time], params[:end_time], params[:start_time], params[:end_time], params[:start_time], params[:end_time])
             puts "overlap:"
             p overlap
+            if !overlap.empty?
+                puts "it's an overlap!"
+                flash[:overlap] = "Your selected time overlaps with another: Please choose another time."
+                redirect back
+            end
             @db.transaction 
             @db.execute('UPDATE booking
                 SET details = ?, start_time = ?, end_time = ?
@@ -247,7 +256,8 @@ class App < Sinatra::Base
                 OR ? < end_time AND end_time < ?', params[:start_time], params[:start_time], params[:end_time], params[:end_time], params[:start_time], params[:end_time], params[:start_time], params[:end_time])
             puts "overlap:"
             if !overlap.empty?
-                puts "it's an overlap!!!"    
+                puts "it's an overlap!"
+                flash[:overlap] = "Your selected time overlaps with another"  
                 redirect back
             end
 

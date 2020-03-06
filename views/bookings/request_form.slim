@@ -2,26 +2,19 @@
     form action="/requests/update" method="post"
         input type="hidden" name="prefilled" id="prefilled" value="false"
         h5 Details:
-        textarea cols="100" rows="4" id="details" name="details"
+        textarea cols="100" rows="4" id="details" name="details" required=""
         .form-group
             label for="start-time" Start time:
-            input type="datetime-local" name="start_time" id="start-time"
+            input type="datetime-local" name="start_time" id="start-time" min="#{DateTime.now.to_s[0...-9]}" value="#{DateTime.now.to_s[0...-9]}" onchange="autoUpdateEndTimeMin()" required=""
             label for="end-time" End time:
-            input type="datetime-local" name="end_time" id="end-time"
+            input type="datetime-local" name="end_time" id="end-time" min="" value="#{params['start_time']}" required=""
         h5 Rooms:
         .form-group
             label class="md-main-label" Select room:  
             select class="mdb-select md-form" multiple="" name="select_room[]" id="select_room"
                 -for room in @rooms
-                    option value="#{room['id']}" = "#{room['name']}"
-                / <option value="" disabled selected>Choose your country</option>
-                / <option value="1">USA</option>
-                / <option value="2">Germany</option>
-                / <option value="3">France</option>
-                / <option value="4">Poland</option>
-                / <option value="5">Japan</option>
-            / <button class="btn-save btn btn-primary btn-sm">Save</button>                        
-            / div id="calendar"
+                    option value="#{room['id']}" = "#{room['name']}"                      
+            div id="calendar"
         button class="btn btn-outline-primary" type="submit" Place
 
     a href="#{@callback}"
@@ -35,9 +28,9 @@
         textarea cols="100" rows="4" id="details" name="details" required="" = "#{current_booking['details']}"
         .form-group
             label for="start-time" Start time:
-            input type="datetime-local" name="start_time" id="start-time" value="#{@current_booking['start_time']}"
+            input type="datetime-local" name="start_time" id="start-time" min="#{DateTime.now.to_s[0...-9]}" value="#{@current_booking['start_time']}" onchange="autoUpdateEndTimeMin()" required=""
             label for="end-time" End time:
-            input type="datetime-local" name="end_time" id="end-time" value="#{@current_booking['end_time']}"
+            input type="datetime-local" name="end_time" id="end-time" min="" value="#{@current_booking['end_time']}" required=""
         h5 Rooms:
         .form-group
             label for="select_room" Select room:  
@@ -51,6 +44,7 @@
                         option selected="" value="#{room['id']}" #{room['name']}
                     -else
                         option value="#{room['id']}" #{room['name']}
+            div id="calendar"
         br/
         button class="btn btn-outline-primary" type="submit" Save
 
