@@ -1,32 +1,32 @@
 function confirmDelete(){
     // var r = confirm("Are you sure?");
-    button = document.getElementById('submit_button')
+    button = document.getElementById('submit_button');
     if (confirm("Are you sure you want to delete this?")){
         button.form.submit();
-    }
-}
+    };
+};
 function confirmPlace(){
     // var r = confirm("Are you sure?");
-    button = document.getElementById('submit_button')
+    button = document.getElementById('submit_button');
     if (confirm("Are you sure you want to place this?")){
         button.form.submit();
-    }
-}
+    };
+};
 
 // Material Select Initialization
 // $(document).ready(function() {
 // $('.mdb-select').materialSelect();
 // });
 
-$('#calendar').fullCalendar({
-    header: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'month,agendaWeek,agendaDay,listWeek'
-    },
-    defaultDate: Date.now().toString(),
-    navLinks: true,
-    eventLimit: true,
+// $('#calendar').fullCalendar({
+//     header: {
+//         left: 'prev,next today',
+//         center: 'title',
+//         right: 'month,agendaWeek,agendaDay,listWeek'
+//     },
+//     defaultDate: Date.now().toString(),
+//     navLinks: true,
+//     eventLimit: true,
     // events: [{
     //         title: 'Front-End Conference',
     //         start: '2018-11-16',
@@ -58,11 +58,17 @@ $('#calendar').fullCalendar({
     //         end: '2018-11-29'
     //     },
     // ]
-});
+// });
+
 function autoUpdateEndTimeMin(){
-    console.log('running')
+    console.log('running');
     let startTime = document.getElementById('start-time');
     let endTime = document.getElementById('end-time');
-    endTime.min = startTime.value
-    endTime.value = startTime.value
+    endTime.min = startTime.value;
+    endTime.value = startTime.value;
 };
+
+function dateSelect(){
+    let date = document.getElementById('booking-date');
+    
+}

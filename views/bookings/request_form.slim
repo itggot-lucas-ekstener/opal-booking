@@ -4,17 +4,18 @@
         h5 Details:
         textarea cols="100" rows="4" id="details" name="details" required=""
         .form-group
-            label for="start-time" Start time:
-            input type="datetime-local" name="start_time" id="start-time" min="#{DateTime.now.to_s[0...-9]}" value="#{DateTime.now.to_s[0...-9]}" onchange="autoUpdateEndTimeMin()" required=""
-            label for="end-time" End time:
-            input type="datetime-local" name="end_time" id="end-time" min="" value="#{params['start_time']}" required=""
+            / label for="start-time" Start time:
+            label for="booking-date" Date: 
+            input type="date" name="booking_date" id="booking-date" min="#{Date.today.to_s}" value="#{Date.today.to_s}" required="" onchange=""
+            / input type="datetime-local" name="start_time" id="start-time" min="#{DateTime.now.to_s[0...-9]}" value="#{DateTime.now.to_s[0...-9]}" onchange="autoUpdateEndTimeMin()" required=""
+            / label for="end-time" End time:
+            / input type="datetime-local" name="end_time" id="end-time" min="" value="#{params['start_time']}" required=""
         h5 Rooms:
         .form-group
             label class="md-main-label" Select room:  
             select class="mdb-select md-form" multiple="" name="select_room[]" id="select_room"
                 -for room in @rooms
-                    option value="#{room['id']}" = "#{room['name']}"                      
-            div id="calendar"
+                    option value="#{room['id']}" = "#{room['name']}"
         button class="btn btn-outline-primary" type="submit" Place
 
     a href="#{@callback}"
@@ -44,7 +45,6 @@
                         option selected="" value="#{room['id']}" #{room['name']}
                     -else
                         option value="#{room['id']}" #{room['name']}
-            div id="calendar"
         br/
         button class="btn btn-outline-primary" type="submit" Save
 

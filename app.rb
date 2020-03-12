@@ -205,11 +205,15 @@ class App < Sinatra::Base
         slim :'user/requests'
     end
 
-    get '/requests/new/?' do
+    get '/requests/new/date/?' do
         @rooms = @db.execute('SELECT * FROM room')
         # p @rooms
         p DateTime.now.to_s
         slim :'bookings/new'
+    end
+
+    get '/requests/new/details/?' do
+        
     end
 
     post '/requests/update/?' do
