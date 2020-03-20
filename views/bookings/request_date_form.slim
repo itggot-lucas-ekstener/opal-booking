@@ -1,0 +1,5 @@
+h5 Select date of your booking
+form action="/requests/date-select" method="post"
+    label for="booking-date" Date: 
+    input type="date" name="booking_date" id="booking-date" min="#{Date.today.to_s}" value="#{Date.today.to_s}" required="" onchange=""
+    button type="submit" class="btn btn-primary" Select

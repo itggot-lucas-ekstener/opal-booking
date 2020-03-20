@@ -216,6 +216,15 @@ class App < Sinatra::Base
         
     end
 
+    post '/requests/date-select/?' do
+        selected_date = params[:booking_date]
+        date_start = selected date + "T00:00:00+01:00"
+        date_end = selected_date + "T23:59:59+01:00"
+        date_start_compare = DateTime.parse(date_start).to_time.to_i
+        p DateTime.now.to_s
+        p "hej"
+    end
+
     post '/requests/update/?' do
         p params
         params[:start_time] = DateTime.parse("#{params[:start_time]}:00+01:00").to_time.to_i

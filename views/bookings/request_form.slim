@@ -4,12 +4,12 @@
         h5 Details:
         textarea cols="100" rows="4" id="details" name="details" required=""
         .form-group
-            / label for="start-time" Start time:
-            label for="booking-date" Date: 
-            input type="date" name="booking_date" id="booking-date" min="#{Date.today.to_s}" value="#{Date.today.to_s}" required="" onchange=""
-            / input type="datetime-local" name="start_time" id="start-time" min="#{DateTime.now.to_s[0...-9]}" value="#{DateTime.now.to_s[0...-9]}" onchange="autoUpdateEndTimeMin()" required=""
-            / label for="end-time" End time:
-            / input type="datetime-local" name="end_time" id="end-time" min="" value="#{params['start_time']}" required=""
+            / label for="booking-date" Date: 
+            / input type="date" name="booking_date" id="booking-date" min="#{Date.today.to_s}" value="#{Date.today.to_s}" required="" onchange=""
+            label for="start-time" Start time:
+            input type="datetime-local" name="start_time" id="start-time" min="#{DateTime.now.to_s[0...-9]}" value="#{DateTime.now.to_s[0...-9]}" onchange="autoUpdateEndTimeMin()" required=""
+            label for="end-time" End time:
+            input type="datetime-local" name="end_time" id="end-time" min="" value="#{params['start_time']}" required=""
         h5 Rooms:
         .form-group
             label class="md-main-label" Select room:  
