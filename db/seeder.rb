@@ -140,15 +140,15 @@ class Seeder
             {name:"guest"}
         ]
 
-        # bookings = [
-        #     {
-        #         details:"unanswered booking",
-        #         placed_at:"some date",
-        #         placed_by: 2,
-        #         status_id: 1,
-        #         start_time: "2020-01-01T21:00",
-        #         end_time: "2020-01-01T22:00"
-        #     },
+        bookings = [
+            {
+                details:"unanswered booking",
+                placed_at:"some date",
+                placed_by: 2,
+                status_id: 1,
+                start_time: DateTime.parse("2020-03-21T11:00").to_time.to_i,
+                end_time: DateTime.parse("2020-03-21T12:00").to_time.to_i
+            },
         #     {
         #         details:"answered booking 2",
         #         placed_at:"another date",
@@ -158,7 +158,7 @@ class Seeder
         #         start_time: "2020-01-01T21:00",
         #         end_time: "2020-01-01T22:00"
         #     }
-        # ]
+        ]
 
         status = [
             {name:"pending"},
@@ -195,10 +195,10 @@ class Seeder
             db.execute("INSERT INTO roles (name) VALUES(?)", role[:name])
         end
         
-        # bookings.each do |booking|
-        #     # p booking[:answered_by]
-        #     db.execute("INSERT INTO booking (details, placed_at, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?,?)", booking[:details], booking[:placed_at], booking[:placed_by], booking[:answered_by], booking[:status_id], booking[:start_time], booking[:end_time])
-        # end
+        bookings.each do |booking|
+            # p booking[:answered_by]
+            db.execute("INSERT INTO booking (details, placed_at, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?,?)", booking[:details], booking[:placed_at], booking[:placed_by], booking[:answered_by], booking[:status_id], booking[:start_time], booking[:end_time])
+        end
         
         status.each do |status|
             db.execute("INSERT INTO status (name) VALUES(?)", status[:name])

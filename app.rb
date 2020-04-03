@@ -208,27 +208,39 @@ class App < Sinatra::Base
     get '/requests/new/date/?' do
         @rooms = @db.execute('SELECT * FROM room')
         # p @rooms
-        p DateTime.now.to_s
+        # p Date.today.to_s
         slim :'bookings/new'
     end
 
     get '/requests/new/details/?' do
-        
+        p DateTime.parse(Date.today.to_s).to_time.to_i
+        @rooms = @db.execute('SELECT * FROM room')
+        slim :'bookings/new_details'
     end
 
     post '/requests/date-select/?' do
         selected_date = params[:booking_date]
-        date_start = selected date + "T00:00:00+01:00"
-        date_end = selected_date + "T23:59:59+01:00"
+        date_start = selected_date + "T00:00:00"
+        date_end = selected_date + "T23:59:59" 
         date_start_compare = DateTime.parse(date_start).to_time.to_i
-        p DateTime.now.to_s
-        p "hej"
+        date_end_compare = DateTime.parse(date_end).to_time.to_i
+        # p date_start_compare
+        # p date_end_compare
+        @overlapping_bookings = @db.execute('SELECT id FROM booking 
+            WHERE start_time < ? AND ? < end_time
+            OR start_time < ? AND ? < end_time
+            OR ? < start_time AND start_time < ?
+            OR ? < end_time AND end_time < ?', date_start_compare, date_start_compare, date_end_compare, date_end_compare, date_start_compare, date_end_compare, date_start_compare, date_end_compare)
+        
+        flash[:selected_date] = selected_date
+
+        redirect '/requests/new/details/?'
     end
 
     post '/requests/update/?' do
         p params
-        params[:start_time] = DateTime.parse("#{params[:start_time]}:00+01:00").to_time.to_i
-        params[:end_time] = DateTime.parse("#{params[:end_time]}:00+01:00").to_time.to_i
+        params[:start_time] = DateTime.parse("#{params[:start_time]}:00").to_time.to_i
+        params[:end_time] = DateTime.parse("#{params[:end_time]}:00").to_time.to_i
         if params[:prefilled] == "true"
             puts "update"
             overlap = @db.execute('SELECT * FROM booking 
@@ -240,7 +252,7 @@ class App < Sinatra::Base
             p overlap
             if !overlap.empty?
                 puts "it's an overlap!"
-                flash[:overlap] = "Your selected time overlaps with another: Please choose another time."
+                flash[:overlap] = "Your selected time overlaps with another. Please choose another time."
                 redirect back
             end
             @db.transaction 
