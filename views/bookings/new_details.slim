@@ -1,2 +1,4 @@
 h4 Edit the details of your request
-== slim :'bookings/request_details_form', locals: {prefilled: false, overlaps: @overlapping_bookings}
+/ -p session[:selected_date]
+/ -p session[:overlap]
+== slim :'bookings/request_details_form', locals: {prefilled: false, overlaps: session[:overlapping_bookings], selected_date: session[:selected_date], booked_timestrokes: @booked_timestrokes}

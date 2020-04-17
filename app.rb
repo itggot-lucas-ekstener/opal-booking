@@ -179,6 +179,11 @@ class App < Sinatra::Base
         @current_users_bookings = @db.execute('SELECT *, booking.id as "booking_id", status.name as "status_name" from booking
             JOIN status ON booking.status_id = status.id
             WHERE placed_by = ?', @current_user["id"])
+        
+        @current_users_bookings.each do |booking|
+            booking['start_time'] = DateTime.strptime(booking['start_time'].to_s, '%s').to_s[0...-9].gsub('T',' ')
+            booking['end_time'] = DateTime.strptime(booking['end_time'].to_s, '%s').to_s[0...-9].gsub('T',' ')
+        end
         # p @current_users_bookings
         # @current_users_bookings.each do |b|
             # p b
@@ -213,28 +218,60 @@ class App < Sinatra::Base
     end
 
     get '/requests/new/details/?' do
-        p DateTime.parse(Date.today.to_s).to_time.to_i
+        # p DateTime.parse(Date.today.to_s).to_time.to_i
+        # time_now = Time.new
+        # p time_now.strftime("%k:%M")
+        @booked_timestrokes = []
+        booked_timestrokes_datetime = []
+        if session[:overlapping_bookings].is_a?(Array) && session[:overlapping_bookings].length > 0
+            session[:overlapping_bookings].each do |booking|
+                timestroke = booking['start_time']
+                while timestroke < booking['end_time']
+                    booked_timestrokes_datetime << timestroke
+                    timestroke += 15*60
+                end
+            end
+            booked_timestrokes_datetime.each do |timestroke|
+                timestroke = DateTime.strptime(timestroke.to_s, '%s')
+                if timestroke.hour < 10
+                    hour ="0" + timestroke.hour.to_s
+                else
+                    hour = timestroke.hour.to_s
+                end
+                if timestroke.min < 10
+                    min ="0" + timestroke.min.to_s
+                else
+                    min = timestroke.min.to_s
+                end
+                timestroke = hour + ":" + min
+                p"timestroke"
+                p timestroke
+                @booked_timestrokes << timestroke
+            end
+           
+        else
+
+        end
+
         @rooms = @db.execute('SELECT * FROM room')
         slim :'bookings/new_details'
     end
 
     post '/requests/date-select/?' do
-        selected_date = params[:booking_date]
-        date_start = selected_date + "T00:00:00"
-        date_end = selected_date + "T23:59:59" 
+        session[:selected_date] = params[:booking_date]
+        date_start = session[:selected_date] + "T00:00:00"
+        date_end = session[:selected_date] + "T23:59:59" 
         date_start_compare = DateTime.parse(date_start).to_time.to_i
         date_end_compare = DateTime.parse(date_end).to_time.to_i
         # p date_start_compare
         # p date_end_compare
-        @overlapping_bookings = @db.execute('SELECT id FROM booking 
+        session[:overlapping_bookings] = @db.execute('SELECT id, start_time, end_time FROM booking 
             WHERE start_time < ? AND ? < end_time
             OR start_time < ? AND ? < end_time
             OR ? < start_time AND start_time < ?
             OR ? < end_time AND end_time < ?', date_start_compare, date_start_compare, date_end_compare, date_end_compare, date_start_compare, date_end_compare, date_start_compare, date_end_compare)
-        
-        flash[:selected_date] = selected_date
 
-        redirect '/requests/new/details/?'
+        redirect '/requests/new/details'
     end
 
     post '/requests/update/?' do

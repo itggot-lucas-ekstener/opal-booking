@@ -5,14 +5,16 @@
         textarea cols="100" rows="4" id="details" name="details" required=""
         .form-group
             label for="booking-date" Date: 
-            input type="date" name="booking_date" id="booking-date" min="#{Date.today.to_s}" value="#{flash[:selected_date]}"
-            / label for="start-time" Start time:
+            input type="date" name="booking_date" id="booking-date" min="#{Date.today.to_s}" value="#{selected_date}" disabled=""
+            label for="start-time" Start time:
+            input type="time" name="start_time" id="start-time" min="" value="" onchange="autoUpdateEndTimeMin()" required="" step="900"
             / input type="datetime-local" name="start_time" id="start-time" min="#{DateTime.now.to_s[0...-9]}" value="#{DateTime.now.to_s[0...-9]}" onchange="autoUpdateEndTimeMin()" required=""
-            / label for="end-time" End time:
+            label for="end-time" End time:
+            input type="time" name="end_time" id="end-time" min="" step="900"
             / input type="datetime-local" name="end_time" id="end-time" min="" value="#{params['start_time']}" required=""
             table
                 / -current_date = DateTime.parse(Date.today.to_s).to_time.to_i
-                -i = 0
+        
                 -timespan = 15
                 -hours_per_column = 3
                 -minutes = 0
@@ -32,8 +34,12 @@
                                 -hours_s = "0#{hours}"
                             -else
                                 -hours_s = hours.to_s
-                            -time_stroke = hours_s + ":" + minutes_s
-                            td style="padding: 10px 40px; border: 1px solid black;" = time_stroke
+                            -timestroke = hours_s + ":" + minutes_s
+                            -if booked_timestrokes.include?(timestroke)
+                                td class="booked" style="padding: 10px 40px; border: 1px solid black;" = timestroke
+                            -else
+                                td style="padding: 10px 40px; border: 1px solid black;" = timestroke
+
                             -hours += 3
                     -minutes += 15
                     -if minutes % 60 == 0
