@@ -13,8 +13,6 @@
             input type="time" name="end_time" id="end-time" min="" step="900"
             / input type="datetime-local" name="end_time" id="end-time" min="" value="#{params['start_time']}" required=""
             table
-                / -current_date = DateTime.parse(Date.today.to_s).to_time.to_i
-        
                 -timespan = 15
                 -hours_per_column = 3
                 -minutes = 0
@@ -49,7 +47,7 @@
         h5 Rooms:
         .form-group
             label class="md-main-label" Select room:  
-            select class="mdb-select md-form" multiple="" name="select_room[]" id="select_room"
+            select class="mdb-select md-form" multiple="" name="select_room[]" id="select_room" required=""
                 -for room in @rooms
                     option value="#{room['id']}" = "#{room['name']}"
         button class="btn btn-outline-primary" type="submit" Place

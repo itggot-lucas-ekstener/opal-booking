@@ -211,9 +211,9 @@ class App < Sinatra::Base
     end
 
     get '/requests/new/date/?' do
-        @rooms = @db.execute('SELECT * FROM room')
-        # p @rooms
-        # p Date.today.to_s
+
+        session[:new_booking_date] = params['booking_date']
+        
         slim :'bookings/new'
     end
 
