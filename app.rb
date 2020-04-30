@@ -1,4 +1,5 @@
 require 'rack-flash'
+require 'bcrypt'
 
 class App < Sinatra::Base
     Dir['modules/**/*.rb'].each do |file|
@@ -10,8 +11,7 @@ class App < Sinatra::Base
     
     before do
         SassCompiler.compile
-        @db = SQLite3::Database.new('db/opal_booking.db')
-        @db.results_as_hash = true
+        @db = DBHandler.new.db
         @current_user = @db.execute("SELECT * FROM users WHERE id = ?", 1).first
         # p @current_user
         # session[:user_id] = @current_user[:id]
@@ -24,6 +24,14 @@ class App < Sinatra::Base
 
     get '/login/?' do
         slim :login
+    end
+
+    post '/do-login' do
+        username = params['username']
+        password_uncrypted = params['password']
+        password_hashed = BCrypt::Password.create(password_uncrypted)
+
+        # user = 
     end
     
     get '/admin/?' do
@@ -44,6 +52,7 @@ class App < Sinatra::Base
     end 
 
     get '/admin/requests/:id/?' do
+        @callback = request.path_info[0..14]
         @current_booking = @db.execute('SELECT *, users.id as "user_id", booking.id as "booking_id", status.name as "status_name", users.name as user_name from booking
             JOIN status ON booking.status_id = status.id
             JOIN users ON booking.placed_by = users.id
@@ -211,8 +220,6 @@ class App < Sinatra::Base
     end
 
     get '/requests/new/date/?' do
-
-        session[:new_booking_date] = params['booking_date']
         
         slim :'bookings/new'
     end
@@ -265,7 +272,7 @@ class App < Sinatra::Base
         date_end_compare = DateTime.parse(date_end).to_time.to_i
         # p date_start_compare
         # p date_end_compare
-        session[:overlapping_bookings] = @db.execute('SELECT id, start_time, end_time FROM booking 
+        session[:overlapping_bookings] = @db.execute('SELECT * FROM booking 
             WHERE start_time < ? AND ? < end_time
             OR start_time < ? AND ? < end_time
             OR ? < start_time AND start_time < ?
@@ -275,37 +282,55 @@ class App < Sinatra::Base
     end
 
     post '/requests/update/?' do
-        p params
-        params[:start_time] = DateTime.parse("#{params[:start_time]}:00").to_time.to_i
-        params[:end_time] = DateTime.parse("#{params[:end_time]}:00").to_time.to_i
+        # p params
+        date = session[:selected_date]
+        start_time = DateTime.parse("#{date}T#{params[:start_time]}:00").to_time.to_i
+        end_time = DateTime.parse("#{date}T#{params[:end_time]}:00").to_time.to_i
+        # p start_time
+        # p end_time
+        # p date
         if params[:prefilled] == "true"
-            puts "update"
-            overlap = @db.execute('SELECT * FROM booking 
-                WHERE start_time < ? AND ? < end_time
-                OR start_time < ? AND ? < end_time
-                OR ? < start_time AND start_time < ?
-                OR ? < end_time AND end_time < ?', params[:start_time], params[:start_time], params[:end_time], params[:end_time], params[:start_time], params[:end_time], params[:start_time], params[:end_time])
-            puts "overlap:"
-            p overlap
-            if !overlap.empty?
-                puts "it's an overlap!"
-                flash[:overlap] = "Your selected time overlaps with another. Please choose another time."
-                redirect back
-            end
             @db.transaction 
-            @db.execute('UPDATE booking
-                SET details = ?, start_time = ?, end_time = ?
-                WHERE id = ?', params[:details], params[:start_time], params[:end_time], params[:booking_id])
-            @booking_id = params["booking_id"].to_i
-            p @booking_id     
-            @db.execute('DELETE FROM room_reservation
-                WHERE booking_id = ?', @booking_id)
-            params['select_room'].each do |room_id|
-                
-                # room_id = @db.execute('SELECT id from room
-                #     WHERE name = ?', params["select_room"]).first
-                @db.execute('INSERT INTO room_reservation (booking_id, room_id) VALUES(?,?)', @booking_id, room_id)
-            end
+                puts "update"
+                # @db.execute('DELETE from booking
+                #     WHERE')
+                overlap = @db.execute('SELECT id FROM booking 
+                    WHERE start_time < ? AND ? < end_time
+                    OR start_time < ? AND ? < end_time
+                    OR ? < start_time AND start_time < ?
+                    OR ? < end_time AND end_time < ?
+                    OR start_time = ? AND end_time = ?', start_time, start_time, end_time, end_time, start_time, end_time, start_time, end_time, start_time, end_time)
+                puts "overlap:"
+                p overlap
+                booking_id = params['booking_id'].to_i
+                if !overlap.empty?
+                    if overlap.length != 1
+                        puts "it's an overlap!"
+                        flash[:overlap] = "Your selected time overlaps with another. Please choose another time."
+                        redirect back
+                    else
+                        if overlap.first['id'] == booking_id
+                            p "the overlap is itself"
+                        else
+                            puts "it's an overlap!"
+                            flash[:overlap] = "Your selected time overlaps with another. Please choose another time."
+                            redirect back
+                        end
+                    end
+                end
+                @db.execute('UPDATE booking
+                    SET details = ?, start_time = ?, end_time = ?
+                    WHERE id = ?', params[:details], start_time, end_time, params[:booking_id])
+                @booking_id = params["booking_id"].to_i
+                p @booking_id     
+                @db.execute('DELETE FROM room_reservation
+                    WHERE booking_id = ?', @booking_id)
+                params['select_room'].each do |room_id|
+                    
+                    # room_id = @db.execute('SELECT id from room
+                    #     WHERE name = ?', params["select_room"]).first
+                    @db.execute('INSERT INTO room_reservation (booking_id, room_id) VALUES(?,?)', @booking_id, room_id)
+                end
             @db.commit
         else
             puts "new"
@@ -315,7 +340,8 @@ class App < Sinatra::Base
                 WHERE start_time < ? AND ? < end_time
                 OR start_time < ? AND ? < end_time
                 OR ? < start_time AND start_time < ?
-                OR ? < end_time AND end_time < ?', params[:start_time], params[:start_time], params[:end_time], params[:end_time], params[:start_time], params[:end_time], params[:start_time], params[:end_time])
+                OR ? < end_time AND end_time < ?
+                OR start_time = ? AND end_time = ?', start_time, start_time, end_time, end_time, start_time, end_time, start_time, end_time, start_time, end_time)
             puts "overlap:"
             if !overlap.empty?
                 puts "it's an overlap!"
@@ -327,7 +353,7 @@ class App < Sinatra::Base
                 # p params['details']
                 # p current_time
                 # p @current_user
-                @db.execute('INSERT INTO booking (details, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?)', params['details'], @current_user["id"], nil, 1, params['start_time'], params['end_time'])
+                @db.execute('INSERT INTO booking (details, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?)', params['details'], @current_user["id"], nil, 1, start_time, end_time)
                 booking_id = @db.execute('SELECT id from booking
                 ORDER BY id DESC
                 LIMIT 1;').first

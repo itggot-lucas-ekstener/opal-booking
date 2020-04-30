@@ -1,4 +1,4 @@
-== slim :'bookings/partials/booking_details', locals: {current_booking: @current_booking, current_booking_reservations: @current_booking_reservations}
+== slim :'bookings/partials/booking_details', locals: {current_booking: @current_booking, current_booking_reservations: @current_booking_reservations, callback: @callback}
 
 a href="/admin/requests/#{@current_booking['booking_id']}/edit"
     button class="btn btn-primary" Edit

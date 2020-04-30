@@ -9,4 +9,5 @@ h4= "Request processed by #{current_booking['answered_by']}"
         -for reserv in current_booking_reservations
             li class="list-group-item"= "#{reserv['name']}"
 
-button 
+a href="#{callback}"
+    button back

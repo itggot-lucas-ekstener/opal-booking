@@ -1,0 +1,5 @@
+class Superadmin < User
+
+    
+
+end
