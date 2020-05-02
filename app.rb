@@ -12,7 +12,25 @@ class App < Sinatra::Base
     before do
         SassCompiler.compile
         @db = DBHandler.new.db
-        @current_user = @db.execute("SELECT * FROM users WHERE id = ?", 1).first
+        @login_handler = Loginhandler.new(@db)
+
+        unless request.path == '/login' or request.path == '/do-login' or request.path == '/register' or request.path == '/do-register' or request.path == '/'
+            if session[:user].nil?
+                redirect '/login'
+            end
+        end
+
+        # if request.path != '/login' && session[:user].nil? 
+        #     redirect '/login'
+        # elsif request.path != '/login' && session[:user].nil? 
+        #     redirect '/login'
+        # else
+        #     unless request.path == '/login' && request.path == '/do-login'
+        #         @current_user = session[:user]
+        #         @current_user_id = @current_user.id
+        #     end
+        # end
+        # @current_user = @db.execute("SELECT * FROM users WHERE id = ?", 1).first
         # p @current_user
         # session[:user_id] = @current_user[:id]
     end
@@ -23,22 +41,86 @@ class App < Sinatra::Base
 
 
     get '/login/?' do
-        slim :login
+        slim :'user/login'
     end
 
-    post '/do-login' do
+    post '/do-login/?' do
         username = params['username']
-        password_uncrypted = params['password']
-        password_hashed = BCrypt::Password.create(password_uncrypted)
+        password_noncrypted = params['password']
+        # password_hashed = BCrypt::Password.create(password_uncrypted)
 
-        # user = 
+        user = @login_handler.user_login(username, password_noncrypted)
+        p user
+
+        if user
+            session[:user] = user
+            redirect '/'
+        else
+            flash[:login_error] = "Failed to login. Username, mail or password incorrect"
+            p 'error'
+            redirect '/login'
+        end
+    end
+
+    get '/logout' do
+        session.clear
+        # cookies.delete('user_id')
+        flash[:loggedout] = "You are logged out"
+        redirect '/'
+    end
+
+    get '/register' do
+        slim :'user/register'
+    end
+
+    post '/do-register' do
+        username = params['register_username']
+        mail = params['register_mail']
+        password = params['register_password']
+        confirm_password = params['confirm_password']
+        p password
+        p confirm_password
+        flash[:register_username] = username
+        flash[:register_mail] = mail
+        unless @login_handler.username_unique?(username)
+            flash[:register_username_error] = "Username already taken"
+            error = true
+        end
+        unless @login_handler.mail_unique?(mail)
+            flash[:register_mail_error] = "Email already connected to another account"
+            error = true
+        end
+        unless password == confirm_password
+            flash[:register_password_error] = "Passwords does not match"
+            error = true
+        end
+        if error
+            redirect '/register'
+        end
+        if @login_handler.user_register(username, mail, password)
+            flash[:misc_msg] = "Register successful, please log in to use account"
+            redirect '/login'
+        else
+            flash[:register_misc_error] = "An error occured, please try again"
+            redirect '/register'
+        end
+    end
+
+    get '/unathourized' do
+        slim :unathourized
     end
     
     get '/admin/?' do
+        unless User.admin_check(session[:user])
+            redirect '/unathourized'
+        end
         slim :'admin/admin_main'
     end
 
     get '/admin/requests/?' do
+        unless User.admin_check(session[:user])
+            redirect '/unathourized'
+        end
         all_bookings = @db.execute('SELECT *, users.id as "user_id", booking.id as "booking_id", status.name as "status_name" from booking
             JOIN status ON booking.status_id = status.id
             JOIN users ON booking.placed_by = users.id')
@@ -52,6 +134,9 @@ class App < Sinatra::Base
     end 
 
     get '/admin/requests/:id/?' do
+        unless User.admin_check(session[:user])
+            redirect '/unathourized'
+        end
         @callback = request.path_info[0..14]
         @current_booking = @db.execute('SELECT *, users.id as "user_id", booking.id as "booking_id", status.name as "status_name", users.name as user_name from booking
             JOIN status ON booking.status_id = status.id
@@ -69,6 +154,9 @@ class App < Sinatra::Base
     end
 
     get '/admin/requests/:id/edit/?' do
+        unless User.admin_check(session[:user])
+            redirect '/unathourized'
+        end
         @callback = request.path_info[0..-5]
         @rooms = @db.execute('SELECT * FROM room')
         @current_booking = @db.execute('SELECT * FROM booking 
@@ -87,17 +175,23 @@ class App < Sinatra::Base
     end
 
     post '/admin/requests/:id/accept/?' do
+        unless User.admin_check(session[:user])
+            redirect '/unathourized'
+        end
         @db.execute('UPDATE booking
             SET status_id = 2
             WHERE id = ?', params["id"])
         @db.execute('UPDATE booking
             SET answered_by = ?
-            WHERE id = ?', @current_user["id"], params["id"])
+            WHERE id = ?', @current_user_id, params["id"])
             p params["id"]
         redirect back
     end
 
     post '/admin/requests/:id/deny/?' do
+        unless User.admin_check(session[:user])
+            redirect '/unathourized'
+        end
         # code for change in database
         @db.execute('UPDATE booking
             SET status_id = 3
@@ -107,12 +201,18 @@ class App < Sinatra::Base
     end
 
     get '/admin/rooms/?' do
+        unless User.admin_check(session[:user])
+            redirect '/unathourized'
+        end
         @all_rooms = @db.execute('SELECT * FROM room')
 
         slim :'admin/admin_rooms'
     end
 
     get '/admin/rooms/view/:id/?' do
+        unless User.admin_check(session[:user])
+            redirect '/unathourized'
+        end
         @current_room = @db.execute('SELECT * FROM room
             WHERE id = ?', params["id"]).first
         p @current_room
@@ -121,22 +221,34 @@ class App < Sinatra::Base
     end
 
     get '/admin/rooms/view/:id/edit/?' do
+        unless User.admin_check(session[:user])
+            redirect '/unathourized'
+        end
         @current_room = @db.execute('SELECT * FROM room
             WHERE id = ?', params["id"]).first
         slim :'admin/admin_room_edit'
     end
 
     post '/admin/rooms/view/:id/delete' do 
+        unless User.admin_check(session[:user])
+            redirect '/unathourized'
+        end
         @db.execute('DELETE FROM room 
             WHERE id = ?', params["id"])
         redirect '/admin/rooms'
     end
 
     get '/admin/rooms/new/?' do
+        unless User.admin_check(session[:user])
+            redirect '/unathourized'
+        end
         slim :'admin/admin_room_new'
     end
 
     post '/admin/rooms/update/?' do
+        unless User.admin_check(session[:user])
+            redirect '/unathourized'
+        end
         if params[:prefilled] == "true"
             puts "Update"
             @db.execute('UPDATE room
@@ -168,6 +280,9 @@ class App < Sinatra::Base
     # end
 
     post '/admin/users/demote/?' do
+        unless User.superadmin_check(session[:user])
+            redirect '/unathourized'
+        end
         user_role = @db.execute('SELECT role_id FROM users
             WHERE id = ?', params["user_id"]).first["role_id"]
         @db.execute('UPDATE users
@@ -176,6 +291,9 @@ class App < Sinatra::Base
         redirect back
     end
     post '/admin/users/promote/?' do
+        unless User.superadmin_check(session[:user])
+            redirect '/unathourized'
+        end
         user_role = @db.execute('SELECT role_id FROM users
             WHERE id = ?', params["user_id"]).first["role_id"]
         @db.execute('UPDATE users
@@ -187,7 +305,7 @@ class App < Sinatra::Base
     get '/requests/?' do
         @current_users_bookings = @db.execute('SELECT *, booking.id as "booking_id", status.name as "status_name" from booking
             JOIN status ON booking.status_id = status.id
-            WHERE placed_by = ?', @current_user["id"])
+            WHERE placed_by = ?', @current_user_id)
         
         @current_users_bookings.each do |booking|
             booking['start_time'] = DateTime.strptime(booking['start_time'].to_s, '%s').to_s[0...-9].gsub('T',' ')
@@ -353,7 +471,7 @@ class App < Sinatra::Base
                 # p params['details']
                 # p current_time
                 # p @current_user
-                @db.execute('INSERT INTO booking (details, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?)', params['details'], @current_user["id"], nil, 1, start_time, end_time)
+                @db.execute('INSERT INTO booking (details, placed_by, answered_by, status_id, start_time, end_time) VALUES(?,?,?,?,?,?)', params['details'], @current_user_id, nil, 1, start_time, end_time)
                 booking_id = @db.execute('SELECT id from booking
                 ORDER BY id DESC
                 LIMIT 1;').first

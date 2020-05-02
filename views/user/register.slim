@@ -1,0 +1,33 @@
+fieldset
+legend Register
+
+form action="/do-register" method="post" id="login_form" autocomplete="off"
+    div class="d-flex flex-column" style="width: 300px"
+        
+        label for="register-username" Username
+        input name="register_username" id="register-username" required="" type="text" value="#{flash[:register_username]}"
+        -unless flash[:register_username_error].nil?
+            div class="alert alert-danger" = flash[:register_username_error]
+
+        label for="register-mail" Mail
+        input class="" name="register_mail" id="register-mail" required="" type="email" value="#{flash[:register_mail]}"
+        -unless flash[:register_mail_error].nil?
+            div class="alert alert-danger" = flash[:register_mail_error]
+            
+        label for="register-password" Password
+        input class="" name="register_password" id="register-password" required="" type="password"
+        -unless flash[:register_password_error].nil?
+            div class="alert alert-danger" = flash[:register_password_error]
+            
+        label for="confirm-password" Confirm Password
+        input class="" name="confirm_password" id="confirm-password" required="" type="password"
+
+        -unless flash[:register_misc_error].nil?
+            div class="alert alert-danger" = flash[:register_misc_error]
+
+        button class="w-25" type="submit" autofocus="" Register
+
+a href="/login"
+    button class="btn btn-danger" Cancel
+a href="/"
+    button class="btn btn-warning" Home Page

@@ -14,63 +14,63 @@ html lang="en"
 
     body
         div class="container-fluid"
-            / nav class="navbar navbar-dark bg-dark" id="admin-navbar"
-                a class="navbar-brand" href="/" Opal Booking
-                div class="nav-item dropdown"
-                    a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" Admin
-                    div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"
-                        a class="dropdown-item" href="/admin" Main
-                        a class="dropdown-item" href="/admin/requests" Requests
-                        a class="dropdown-item" href="/admin/rooms" Rooms
-                div class="nav-item dropdown"
-                    a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" User
-                    div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"
-                        a class="dropdown-item" href="/requests" Requests
+            -if request.path != '/login' && request.path != '/register' && request.path != '/unathourized'
+                -unless session[:user].nil? or session[:user].role >= 3 
+                    nav class="navbar navbar-expand-lg navbar-dark bg-dark"
+                        div class="navbar-brand" href="#" Navbar
+                        button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"
+                            span class="navbar-toggler-icon"
+                        div class="collapse navbar-collapse" id="navbarNavDropdown"
+                            ul class="navbar-nav"
+                                li class="nav-item"
+                                    a class="btn btn-light" href="/" Home
+                                li class="nav-item dropdown"
+                                    a class="btn btn-light dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" Admin
+                                    div class="dropdown-menu dropdown-primary" aria-labelledby="dropdownMenu2"
+                                        a class="dropdown-item" href="/admin" Main
+                                        a class="dropdown-item" href="/admin/requests" Requests
+                                        a class="dropdown-item" href="/admin/rooms" Rooms
+                                        a class="dropdown-item" href="/admin/users" Users
+                                li class="nav-item dropdown"
+                                    a class="btn btn-light dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" User
+                                    div class="dropdown-menu dropdown-primary" aria-labelledby="dropdownMenu2"
+                                        a class="dropdown-item" href="/" Main
+                                        a class="dropdown-item" href="/requests" Requests
+                                li class="nav-item"
+                                    a class="btn btn-warning" type="button" href="/logout" Log out
+                                li class="nav-item d-flex align-items-center justify-content-end"
+                                    p class="d-flex align-items-center" style="color: white;" = session[:user].name
+                -else
+                    nav class="navbar navbar-expand-lg navbar-dark bg-dark"
+                        div class="navbar-brand" href="#" Navbar
+                        button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"
+                            span class="navbar-toggler-icon"
+                        div class="collapse navbar-collapse" id="navbarNavDropdown"
+                            ul class="navbar-nav"
+                                li class="nav-item"
+                                    a class="btn btn-light" href="/" Home
+                                li class="nav-item dropdown"
+                                    a class="btn btn-light dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" User
+                                    div class="dropdown-menu dropdown-primary" aria-labelledby="dropdownMenu2"
+                                        a class="dropdown-item" href="/" Main
+                                        a class="dropdown-item" href="/requests" Requests
+                                -if session[:user].nil?
+                                    li class="nav-item"
+                                        a class="btn btn-primary" type="button" href="/login" Login
+                                -else
+                                    li class="nav-item"
+                                        a class="btn btn-warning" type="button" href="/logout" Log out
+                                    li class="nav-item d-flex align-items-center justify-content-end"
+                                        p class="d-flex align-items-center" style="color: white;" = session[:user].name
 
-        
-            nav class="navbar navbar-expand-lg navbar-dark bg-dark"
-                div class="navbar-brand" href="#" Navbar
-                button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"
-                    span class="navbar-toggler-icon"
-                div class="collapse navbar-collapse" id="navbarNavDropdown"
-                    ul class="navbar-nav"
-                        li class="nav-item"
-                            a class="btn btn-light" href="/" Home
-                        li class="nav-item dropdown"
-                            a class="btn btn-light dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" Admin
-                            div class="dropdown-menu dropdown-primary" aria-labelledby="dropdownMenu2"
-                                a class="dropdown-item" href="/admin" Main
-                                a class="dropdown-item" href="/admin/requests" Requests
-                                a class="dropdown-item" href="/admin/rooms" Rooms
-                                a class="dropdown-item" href="/admin/users" Users
-                        li class="nav-item dropdown"
-                            a class="btn btn-light dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" User
-                            div class="dropdown-menu dropdown-primary" aria-labelledby="dropdownMenu2"
-                                a class="dropdown-item" href="/" Main
-                                a class="dropdown-item" href="/requests" Requests
-            / nav class="navbar navbar-expand-lg navbar-dark bg-dark"
-            /     div class="navbar-brand" href="#" Navbar
-            /     button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"
-            /         span class="navbar-toggler-icon"
-            /     div class="collapse navbar-collapse" id="navbarNavDropdown"
-            /         ul class="navbar-nav"
-            /             li class="nav-item"
-            /                 a class="nav-item nav-link" href="/" Home
-            /             li class="nav-item dropdown"
-            /                 a class="nav-link dropdown-toggle" href="/admin" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" Admin
-            /                 div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"
-            /                     a class="dropdown-item" href="/admin" Main
-            /                     a class="dropdown-item" href="/admin/requests" Requests
-            /                     a class="dropdown-item" href="/admin/rooms" Rooms
-            /                     a class="dropdown-item" href="/admin/users" Users
-            /             li class="nav-item dropdown"
-            /                 a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" User
-            /                 div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"
-            /                     a class="dropdown-item" href="/" Main
-            /                     a class="dropdown-item" href="/requests" Requests
+                            
+
                                 
-            -if flash[:overlap]
-                p id="flash"= flash[:overlap]
+            
+            -if flash[:overlap] #todo - move to request slim
+                p class="flash" = flash[:overlap]
+            -if flash[:misc_msg]
+                h5 class="flash" = flash[:misc_msg]
             
             / nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
                 a.navbar-brand href="#"  Navbar

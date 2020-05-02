@@ -1,7 +1,6 @@
 require_relative 'user.rb'
 
-class Superadmin < User
-
+class Admin < User
     
 
 end
