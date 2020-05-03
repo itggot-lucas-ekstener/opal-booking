@@ -15,7 +15,7 @@ html lang="en"
     body
         div class="container-fluid"
             -if request.path != '/login' && request.path != '/register' && request.path != '/unathourized'
-                -unless session[:user].nil? or session[:user].role >= 3 
+                -unless session[:user].nil? or session[:user].role_id >= 3 
                     nav class="navbar navbar-expand-lg navbar-dark bg-dark"
                         div class="navbar-brand" href="#" Navbar
                         button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"

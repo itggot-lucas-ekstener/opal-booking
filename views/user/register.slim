@@ -4,18 +4,18 @@ legend Register
 form action="/do-register" method="post" id="login_form" autocomplete="off"
     div class="d-flex flex-column" style="width: 300px"
         
-        label for="register-username" Username
-        input name="register_username" id="register-username" required="" type="text" value="#{flash[:register_username]}"
+        label for="name" Username
+        input name="name" id="name" required="" type="text" value="#{flash[:register_username]}"
         -unless flash[:register_username_error].nil?
             div class="alert alert-danger" = flash[:register_username_error]
 
-        label for="register-mail" Mail
-        input class="" name="register_mail" id="register-mail" required="" type="email" value="#{flash[:register_mail]}"
+        label for="mail" Mail
+        input class="" name="mail" id="mail" required="" type="email" value="#{flash[:register_mail]}"
         -unless flash[:register_mail_error].nil?
             div class="alert alert-danger" = flash[:register_mail_error]
             
-        label for="register-password" Password
-        input class="" name="register_password" id="register-password" required="" type="password"
+        label for="password" Password
+        input class="" name="password" id="password" required="" type="password"
         -unless flash[:register_password_error].nil?
             div class="alert alert-danger" = flash[:register_password_error]
             

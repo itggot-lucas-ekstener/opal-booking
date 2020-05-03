@@ -12,7 +12,8 @@ class App < Sinatra::Base
     before do
         SassCompiler.compile
         @db = DBHandler.new.db
-        @login_handler = Loginhandler.new(@db)
+        @user_handler = UserHandler.new(@db)
+        @booking_handler = BookingHandler.new(@db)
 
         unless request.path == '/login' or request.path == '/do-login' or request.path == '/register' or request.path == '/do-register' or request.path == '/'
             if session[:user].nil?
@@ -49,7 +50,7 @@ class App < Sinatra::Base
         password_noncrypted = params['password']
         # password_hashed = BCrypt::Password.create(password_uncrypted)
 
-        user = @login_handler.user_login(username, password_noncrypted)
+        user = @user_handler.user_login(username, password_noncrypted)
         p user
 
         if user
@@ -74,30 +75,45 @@ class App < Sinatra::Base
     end
 
     post '/do-register' do
-        username = params['register_username']
-        mail = params['register_mail']
-        password = params['register_password']
-        confirm_password = params['confirm_password']
-        p password
-        p confirm_password
-        flash[:register_username] = username
-        flash[:register_mail] = mail
-        unless @login_handler.username_unique?(username)
+        p params
+        new_user_hash = {}
+        params.each do |key, value|
+            unless key == 'confirm_password'
+                if key == 'password'
+                    key = 'pwd_hash'
+                    value = BCrypt::Password.create(value)
+                end
+                new_user_hash["#{key}"] = value
+                p key
+                p value
+            end
+        end
+        p new_user_hash
+
+        # params['register_username']
+        # mail = params['register_mail']
+        # password = params['register_password']
+        # confirm_password = params['confirm_password']
+        # p password
+        # p confirm_password
+        # flash[:register_username] = username
+        # flash[:register_mail] = mail
+        unless @user_handler.username_unique?(params['name'])
             flash[:register_username_error] = "Username already taken"
             error = true
         end
-        unless @login_handler.mail_unique?(mail)
+        unless @user_handler.mail_unique?(params['mail'])
             flash[:register_mail_error] = "Email already connected to another account"
             error = true
         end
-        unless password == confirm_password
+        unless params['password'] == params['confirm_password']
             flash[:register_password_error] = "Passwords does not match"
             error = true
         end
         if error
             redirect '/register'
         end
-        if @login_handler.user_register(username, mail, password)
+        if @user_handler.user_register(new_user_hash)
             flash[:misc_msg] = "Register successful, please log in to use account"
             redirect '/login'
         else
