@@ -1,12 +1,12 @@
-== slim :'bookings/partials/booking_details', locals: {current_booking: @current_booking, current_booking_reservations: @current_booking_reservations, callback: @callback}
+== slim :'bookings/partials/booking_details', locals: {current_booking: @current_booking, current_booking_reservations: @current_booking_reservations, booking_placer: @booking_placer, booking_answerer: nil, rooms: @rooms, callback: @callback}
 
-a href="/admin/requests/#{@current_booking['booking_id']}/edit"
+a href="/admin/requests/#{@current_booking.id}/edit"
     button class="btn btn-primary" Edit
 
 .form-group class="d-flex"
-    form action="/admin/requests/#{@current_booking['booking_id']}/accept" method="post"
+    form action="/admin/requests/#{@current_booking.id}/accept" method="post"
         button class="btn btn-outline-success" type="submit" Accept
 
-    form action="/admin/requests/#{@current_booking['booking_id']}/deny" method="post"
+    form action="/admin/requests/#{@current_booking.id}/deny" method="post"
         button class="btn btn-outline-danger" type="submit" Deny
 

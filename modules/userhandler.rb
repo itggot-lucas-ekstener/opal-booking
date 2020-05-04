@@ -30,7 +30,7 @@ class UserHandler
     end
 
     def mail_unique?(mail)
-        unless DbBase.fetch_where(User.new, 'name =', mail).empty?
+        unless DbBase.fetch_where(User.new, 'mail =', mail).empty?
             return false
         else
             return true

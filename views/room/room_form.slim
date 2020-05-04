@@ -4,19 +4,19 @@
             div class="input-group mb-3"
                 div class="input-group-prepend"
                     span class="input-group-text" id="inputGroup-sizing-default" for="room_name" Room name
-                input type="text" name="room_name" maxlength="20" size="20" value="#{current_room['name']}"
+                input type="text" name="name" maxlength="20" size="20" value="#{current_room.name}"
             h5 Details:
-            textarea name="room_details" cols="100" rows="4" #{current_room['room_details']}
+            textarea name="room_details" cols="100" rows="4" #{current_room.room_details}
         button class="btn btn-outline-primary" type="submit" Save
         input name="prefilled" value="#{prefilled}" type="hidden"
-        input name="room_id" value="#{current_room['id']}" type="hidden"
+        input name="id" value="#{current_room.id}" type="hidden"
 - else 
     form action="/admin/rooms/update" method="post"
         .form-group
             div class="input-group mb-3"
                 div class="input-group-prepend"
                     span class="input-group-text" id="inputGroup-sizing-default" for="room_name" Room name
-                input type="text" name="room_name" maxlength="20" class="form-control" size="20"
+                input type="text" name="name" maxlength="20" class="form-control" size="20"
             h5 Details:
             textarea name="room_details" cols="100" rows="4" maxlength="200"
             

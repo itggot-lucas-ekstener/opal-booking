@@ -1,4 +1,5 @@
 require_relative 'dbbase.rb'
+require_relative 'role.rb'
 
 class User < DbBase
     
@@ -7,7 +8,7 @@ class User < DbBase
     @table_name = 'users'
 
     def initialize()
-    @table = 'users'
+        @table = 'users'
     #     @id = nil
     #     @name = name
     #     @mail = mail
@@ -16,15 +17,15 @@ class User < DbBase
     #     @table = "users"
     end
 
-    def self.admin_check(user)
-        if user.role_id <= 2
+    def admin_check()
+        if @role_id <= Role::ADMIN
             return true
         else
             return false
         end
     end
-    def self.superadmin_check(user)
-        if user.role_id <= 1
+    def superadmin_check()
+        if @role_id <= Role::SUPERADMIN
             return true
         else
             return false
@@ -36,10 +37,7 @@ class User < DbBase
             @@db.execute('INSERT INTO users (name, mail, pwd_hash, role_id) VALUES(?,?,?,?)', @name, @mail, @pwd_hash, @role_id)
         else
             @@db.execute('UPDATE users
-                SET name = ?
-                SET mail = ?
-                SET pwd_hash = ?
-                SET role_id = ?
+                SET name = ?, mail = ?, pwd_hash = ?, role_id = ?
                 WHERE id = ?', @name, @mail, @pwd_hash, @role_id, @id)
         end
     end
