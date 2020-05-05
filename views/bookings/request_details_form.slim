@@ -8,21 +8,17 @@
             input type="date" name="booking_date" id="booking-date" min="#{Date.today.to_s}" value="#{selected_date}" disabled=""
             label for="start-time" Start time:
             input type="time" name="start_time" id="start-time" min="" value="" onchange="autoUpdateEndTimeMin()" required="" step="900"
-            / input type="datetime-local" name="start_time" id="start-time" min="#{DateTime.now.to_s[0...-9]}" value="#{DateTime.now.to_s[0...-9]}" onchange="autoUpdateEndTimeMin()" required=""
             label for="end-time" End time:
             input type="time" name="end_time" id="end-time" min="" step="900"
-            / input type="datetime-local" name="end_time" id="end-time" min="" value="#{params['start_time']}" required=""
             table
                 -timespan = 15
                 -hours_per_column = 3
                 -minutes = 0
                 -hours_start = 0
                 -(60*hours_per_column/timespan).times do
-                    / -time_to_write += i *()
                     tr
                         -hours = hours_start
-                        / -if i % 4 == 0
-                        / -minutes = 0
+                       
                         -(24/hours_per_column).times do
                             -if minutes < 10
                                 -minutes_s = "0#{minutes}"

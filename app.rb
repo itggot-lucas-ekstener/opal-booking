@@ -13,7 +13,6 @@ class App < Sinatra::Base
         SassCompiler.compile
         @db = DBHandler.new.db
         @user_handler = UserHandler.new(@db)
-        @booking_handler = BookingHandler.new(@db)
 
         unless request.path == '/login' or request.path == '/do-login' or request.path == '/register' or request.path == '/do-register' or request.path == '/'
             if session[:user].nil?
@@ -35,7 +34,7 @@ class App < Sinatra::Base
     post '/do-login/?' do
         username = params['username']
         password_noncrypted = params['password']
-        # password_hashed = BCrypt::Password.create(password_uncrypted)
+       
 
         user = @user_handler.user_login(username, password_noncrypted)
         p user
@@ -52,7 +51,7 @@ class App < Sinatra::Base
 
     get '/logout' do
         session.clear
-        # cookies.delete('user_id')
+       
         flash[:loggedout] = "You are logged out"
         redirect '/'
     end
@@ -117,11 +116,7 @@ class App < Sinatra::Base
         unless session[:user].admin_check
             redirect '/unathourized'
         end
-        # all_bookings = @db.execute('SELECT *, users.id as "user_id", booking.id as "booking_id", status.name as "status_name" from booking
-        #     JOIN status ON booking.status_id = status.id
-        #     JOIN users ON booking.placed_by = users.id')
-        # @users = DbBase.fetch_all(User.new)
-        # p @users
+       
         all_bookings = DbBase.fetch_all(Booking.new)
         
         @pending = all_bookings.select {|booking| booking.status_id == Status::PENDING}
@@ -161,15 +156,14 @@ class App < Sinatra::Base
         @booking_id = params['id'].to_i
         @rooms = DbBase.fetch_all(Room.new)
         @current_booking = DbBase.fetch_by_id(Booking.new, @booking_id)
-        # @current_booking = @db.execute('SELECT * FROM booking 
-        #     WHERE id = ?', params["id"]).first
+      
         @times = {}
         @times['start_time'] = DateTime.strptime(@current_booking.start_time.to_s, '%s').to_s[0..-7]
         @times['end_time'] = DateTime.strptime(@current_booking.end_time.to_s, '%s').to_s[0..-7]      
         @current_booking_reservations = DbBase.fetch_where(RoomReservation.new, 'booking_id =', @booking_id)
         @rooms = DbBase.fetch_all(Room.new)
        
-        # p @current_booking_reservations
+      
 
         
         slim :'bookings/edit'
@@ -187,7 +181,7 @@ class App < Sinatra::Base
         unless session[:user].admin_check
             redirect '/unathourized'
         end
-        # code for change in database
+       
         Booking.deny(params['id'].to_i, session[:user])
         redirect back
     end
@@ -244,10 +238,7 @@ class App < Sinatra::Base
             @room.name = params['name']
             @room.room_details = params['room_details']
             @room.save
-            # @db.execute('UPDATE room
-            #     SET name = ?, room_details = ?
-            #     WHERE id = ?', params['name'], params['room_details'], params['id'])
-            puts "Success"
+         
         else
             puts "New"
             p params
@@ -275,18 +266,12 @@ class App < Sinatra::Base
         slim :'admin/admin_users'
     end
 
-    # get '/admin/users/:id/view' do
-    #     @selected_user = @db.execute('SELECT * FROM users
-    #         WHERE id = ?', params[:id]).first
-    #     slim :'admin/admin_users_view'
-    # end
-
+  
     post '/admin/users/demote/?' do
         unless session[:user].superadmin_check
             redirect '/unathourized'
         end
-        # user_role = @db.execute('SELECT role_id FROM users
-        #     WHERE id = ?', params["user_id"]).first["role_id"]
+       
         @user = DbBase.fetch_by_id(User.new, params['user_id'])
         @user.role_id = Role::USER
         @user.save
@@ -339,17 +324,14 @@ class App < Sinatra::Base
         date_end = session[:selected_date] + "T23:59:59" 
         date_start_compare = DateTime.parse(date_start).to_time.to_i
         date_end_compare = DateTime.parse(date_end).to_time.to_i
-        # p date_start_compare
-        # p date_end_compare
+     
         session[:overlapping_bookings] = Booking.overlap?(date_start_compare, date_end_compare)
 
         redirect '/requests/new/details'
     end
 
     get '/requests/new/details/?' do
-        # p DateTime.parse(Date.today.to_s).to_time.to_i
-        # time_now = Time.new
-        # p time_now.strftime("%k:%M")
+      
         @booked_timestrokes = []
         booked_timestrokes_datetime = []
         if session[:overlapping_bookings].is_a?(Array) && session[:overlapping_bookings].length > 0
@@ -385,18 +367,14 @@ class App < Sinatra::Base
     end
 
     post '/requests/update/?' do
-        # p params
         date = session[:selected_date]
         start_time = DateTime.parse("#{date}T#{params[:start_time]}:00").to_time.to_i
         end_time = DateTime.parse("#{date}T#{params[:end_time]}:00").to_time.to_i
-        # p start_time
-        # p end_time
-        # p date
+      
         if params[:prefilled] == "true"
             @db.transaction 
                 puts "update"
-                # @db.execute('DELETE from booking
-                #     WHERE')
+              
                 overlap = Booking.overlap?(start_time, end_time)           
                 puts "overlap:"
                 p overlap
@@ -422,16 +400,9 @@ class App < Sinatra::Base
                 @updated_booking.start_time = start_time
                 @updated_booking.end_time = end_time
                 @updated_booking.save
-                # @db.execute('UPDATE booking
-                #     SET details = ?, start_time = ?, end_time = ?
-                #     WHERE id = ?', params[:details], start_time, end_time, params[:booking_id])
-                # @booking_id = params["booking_id"].to_i
-                # p @booking_id     
 
                 room_reservations = DbBase.fetch_where(RoomReservation.new, "booking_id =", @updated_booking.id)
-                room_reservation.each { |reservation| reservation.delete }
-                # @db.execute('DELETE FROM room_reservation
-                #     WHERE booking_id = ?', @booking_id)
+                room_reservations.each { |reservation| reservation.delete }
 
                 params['select_room'].each do |room_id|
                     new_reservation = RoomReservation.new
@@ -453,9 +424,6 @@ class App < Sinatra::Base
             end
 
             @db.transaction
-                # p params['details']
-                # p current_time
-                # p @current_user
                 new_booking = Booking.new
                 new_booking.details = params['details']
                 new_booking.placed_by = session[:user].id
@@ -464,7 +432,6 @@ class App < Sinatra::Base
                 new_booking.end_time = end_time
                 new_booking.save
                 new_booking_id = Booking.fetch_latest.id
-                # p booking_id
                 p params
                 params['select_room'].each do |room_id|
                     new_reservation = RoomReservation.new

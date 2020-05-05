@@ -1,15 +1,14 @@
 require_relative 'dbbase.rb'
 
+# Handles the different statuses of the bookings.
 class Status < DbBase 
 
-    attr_accessor :id, :name, :table
+    # Public: Integer of the value the pending status has.
     PENDING = 1
+    # Public: Integer of the value the accepted status has.
     ACCEPTED = 2
+    # Public: Integer of the value the denied status has.
     DENIED = 3
-    
-    def initialize
-        @table = "status"
-    end
 
     
 end
