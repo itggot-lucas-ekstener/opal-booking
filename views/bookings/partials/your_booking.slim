@@ -1,7 +1,24 @@
-h4= "Details: #{current_booking['details']}"
-h4= "Request processed by #{current_booking['answered_by']}"
-h5= "From #{current_booking['start_time']} to #{current_booking['end_time']}"
-h4= "Reserved rooms"
-.reservations
-    -for reserv in current_booking_reservations
-        p= "#{reserv['name']}"
+/ h4= "Details: #{current_booking.details}"
+/ h4= "Request processed by #{current_booking.answered_by}"
+/ h5= "From #{current_booking.start_time} to #{current_booking.end_time}"
+/ h4= "Reserved rooms"
+/ .reservations
+/     -for reserv in current_booking_reservations
+/         -for room in rooms
+/             -if room.id == reserv.room_id
+/                 p ="#{room.name}"
+.card style="width: 25rem"
+    .card-header
+        h4= current_booking.details
+    ul class="list-group"
+        li class="list-group-item" 
+            h5= "Details: #{current_booking.details}"
+        li class="list-group-item"
+            p="Start time: #{current_booking.start_time}"
+            p="End time: #{current_booking.end_time}"
+        li class="list-group-item"
+            h5="Rooms"
+            -for reserv in current_booking_reservations
+                -for room in rooms
+                    -if room.id == reserv.room_id
+                        p ="#{room.name}" 

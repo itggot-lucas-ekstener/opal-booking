@@ -1,13 +1,14 @@
-h2= "Booking request by #{current_booking['name']}"
-h4= "Mail: #{current_booking['mail']}"
-h4= "Details: #{current_booking['details']}"
-h4= "Request processed by #{current_booking['answered_by']}"
+h2= "Booking request by #{booking_placer.name}"
+h4= "Mail: #{booking_placer.mail}"
+h4= "Details: #{current_booking.details}"
+-unless booking_answerer.nil?
+    h4= "Request processed by #{booking_answerer.name}"
 .reservations class="card" style="width: 18rem"
     div class="card-header" 
         b Reserved rooms
     ul class="list-group"
-        -for reserv in current_booking_reservations
-            li class="list-group-item"= "#{reserv['name']}"
+        -rooms.each do |room|
+            li class="list-group-item"= "#{room.name}"
 
 a href="#{callback}"
     button back

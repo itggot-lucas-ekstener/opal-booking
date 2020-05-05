@@ -4,28 +4,28 @@ div class="users w-50" style="max-width: 400px"
     h4 Admin
     / .list-group
     /     -@admin_users.each do |user|
-    /         a href="/admin/users/#{user['id']}/view" class="list-group-item list-group-item-action" = "#{user['name']} - Admin"
+    /         a href="/admin/users/#{user.id}/view" class="list-group-item list-group-item-action" = "#{user.name} - Admin"
     -if !@admin_users.empty?
         -@admin_users.each do |user|
             #accordion
                 .card
-                    .card-header id="heading#{user['id']}"
+                    .card-header id="heading#{user.id}"
                         h5 class="mb-0"
-                            button class="btn btn-link w-100 d-flex flex-align-left" style="color: var(--dark)" data-toggle="collapse" data-target="#collapse#{user['id']}" aria-control="collapse#{user['id']}" = "#{user['name']} - Admin"
-                    div id="collapse#{user['id']}" class="collapse" aria-labelledby="heading#{user['id']}" data-parent="#accordion" aria-expanded="false"
+                            button class="btn btn-link w-100 d-flex flex-align-left" style="color: var(--dark)" data-toggle="collapse" data-target="#collapse#{user.id}" aria-control="collapse#{user.id}" = "#{user.name} - Admin"
+                    div id="collapse#{user.id}" class="collapse" aria-labelledby="heading#{user.id}" data-parent="#accordion" aria-expanded="false"
                         .card-body 
                             ul class="list-group w-100"
                                 li class="list-group-item flex-column align-items-start"
                                     div class="d-flex w-100 justify-content-between"
                                         h5 class="mb-1" Mail
-                                    p class="mb-1" = user['mail']
+                                    p class="mb-1" = user.mail
                                 li class="list-group-item flex-column align-items-start"
                                     div class="d-flex w-100 justify-content-between"
                                         h5 class="mb-1" Tel
                                     p class="mb-1" = "070-123 45 67"
                             div class="d-flex align-items-space-between"
                                 form action="/admin/users/demote" method="post"
-                                    input type="hidden" name="user_id" value="#{user['id']}"
+                                    input type="hidden" name="user_id" value="#{user.id}"
                                     button type="submit" class="btn btn-danger" Demote
     -else 
         div class="alert alert-secondary"
@@ -34,26 +34,26 @@ div class="users w-50" style="max-width: 400px"
     / .list-group
     -if !@normal_users.empty?
         -@normal_users.each do |user|
-            / a href="/admin/users/#{user['id']}/view" class="list-group-item list-group-item-action" = "#{user['name']} - User"
+            / a href="/admin/users/#{user.id}/view" class="list-group-item list-group-item-action" = "#{user.name} - User"
             #accordion
                 .card
-                    .card-header id="heading#{user['id']}"
+                    .card-header id="heading#{user.id}"
                         h5 class="mb-0"
-                            button class="btn btn-link w-100 d-flex flex-align-left" style="color: var(--dark)" data-toggle="collapse" data-target="#collapse#{user['id']}" = "#{user['name']} - User"
-                    div id="collapse#{user['id']}" class="collapse" aria-labelledby="heading#{user['id']}" data-parent="#accordion" aria-expanded="false"
+                            button class="btn btn-link w-100 d-flex flex-align-left" style="color: var(--dark)" data-toggle="collapse" data-target="#collapse#{user.id}" = "#{user.name} - User"
+                    div id="collapse#{user.id}" class="collapse" aria-labelledby="heading#{user.id}" data-parent="#accordion" aria-expanded="false"
                         .card-body 
                             ul class="list-group w-100"
                                 li class="list-group-item flex-column align-items-start"
                                     div class="d-flex w-100 justify-content-between"
                                         h5 class="mb-1" Mail
-                                    p class="mb-1" = user['mail']
+                                    p class="mb-1" = user.mail
                                 li class="list-group-item flex-column align-items-start"
                                     div class="d-flex w-100 justify-content-between"
                                         h5 class="mb-1" Tel
                                     p class="mb-1" = "070-123 45 67"
                             div class="d-flex align-items-space-between"
                                 form action="/admin/users/promote" method="post"
-                                    input type="hidden" name="user_id" value="#{user['id']}"
+                                    input type="hidden" name="user_id" value="#{user.id}"
                                     button type="submit" class="btn btn-success" Promote
     -else 
         div class="alert alert-secondary"

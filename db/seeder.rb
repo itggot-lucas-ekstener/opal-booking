@@ -146,18 +146,18 @@ class Seeder
                 placed_at:"some date",
                 placed_by: 2,
                 status_id: 1,
-                start_time: DateTime.parse("2020-03-21T11:00").to_time.to_i,
-                end_time: DateTime.parse("2020-03-21T12:00").to_time.to_i
+                start_time: DateTime.parse("2020-05-05T11:00").to_time.to_i,
+                end_time: DateTime.parse("2020-05-05T12:00").to_time.to_i
             },
-        #     {
-        #         details:"answered booking 2",
-        #         placed_at:"another date",
-        #         placed_by: 2,
-        #         answered_by: 1,
-        #         status_id: 2,
-        #         start_time: "2020-01-01T21:00",
-        #         end_time: "2020-01-01T22:00"
-        #     }
+            {
+                details:"answered booking 2",
+                placed_at:"another date",
+                placed_by: 2,
+                answered_by: 1,
+                status_id: 2,
+                start_time: DateTime.parse("2020-05-05T21:00").to_time.to_i,
+                end_time: DateTime.parse("2020-05-05T22:00").to_time.to_i,
+            }
         ]
 
         status = [
@@ -166,20 +166,20 @@ class Seeder
             {name:"denied"}
         ]
 
-        # reservations = [
-        #     {
-        #         booking_id: 1,
-        #         room_id: 1
-        #     },
-        #     {
-        #         booking_id: 1,
-        #         room_id: 2
-        #     },
-        #     {
-        #         booking_id: 2,
-        #         room_id: 3
-        #     }
-        # ]
+        reservations = [
+            {
+                booking_id: 1,
+                room_id: 1
+            },
+            {
+                booking_id: 1,
+                room_id: 2
+            },
+            {
+                booking_id: 2,
+                room_id: 3
+            }
+        ]
 
         rooms = [
             {name:"gympasal", details:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde nemo distinctio explicabo vitae ipsum culpa voluptatibus odio accusamus optio. Perspiciatis ea est deserunt veritatis commodi, non nobis reiciendis. Qui repudiandae ex praesentium fuga vel nulla odio, debitis veniam, enim obcaecati, fugiat ea! At veritatis, et libero asperiores velit corporis vitae!"},
@@ -204,9 +204,9 @@ class Seeder
             db.execute("INSERT INTO status (name) VALUES(?)", status[:name])
         end
         
-        # reservations.each do |res|
-        #     db.execute("INSERT INTO room_reservation (booking_id, room_id) VALUES(?,?)", res[:booking_id], res[:room_id])
-        # end
+        reservations.each do |res|
+            db.execute("INSERT INTO room_reservation (booking_id, room_id) VALUES(?,?)", res[:booking_id], res[:room_id])
+        end
         
         rooms.each do |room|
             db.execute("INSERT INTO room (name, room_details) VALUES(?,?)", room[:name], room[:details])
